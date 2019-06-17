@@ -21,8 +21,9 @@ The second version of **[minishell](https://github.com/motaylormo/minishell)**, 
 ### 21sh
 * The `ctrl-D` and `ctrl-C` keys combination features for line edition and process execution
 * The `;` command line separator
-* Pipes `|`
-* The 4 following redirections `<`, `>`, `<<`, and `>>`
+* Parses
+	* Pipes `|`
+	* The 4 following redirections `<`, `>`, `<<`, and `>>`
 * File descriptor aggregation
 * A line edition feature using the `termcaps` library. You must at least manage the following features
 	* Edit the line where the cursor is located
