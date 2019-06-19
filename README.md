@@ -21,8 +21,8 @@ The second version of **[minishell](https://github.com/motaylormo/minishell)**, 
 * Management of execution rights in the `PATH`
 </details>
 
-<details><summary><h3>21sh</h3></summary>
-
+### 21sh
+<details><summary></summary>
 * The `ctrl-D` and `ctrl-C` keys combination features for line edition and process execution
 * The `;` command line separator
 * Pipes `|`
