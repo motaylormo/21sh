@@ -5,7 +5,7 @@ The second version of **[minishell](https://github.com/motaylormo/minishell)**, 
 
 # Features
 ### Minishell
-<details><summary> </summary>
+<details><summary></summary>
 
 * The executable are those you can find in the paths indicated in the `PATH` variable
 * You must deal correctly with the `PATH` and the environment
@@ -23,6 +23,7 @@ The second version of **[minishell](https://github.com/motaylormo/minishell)**, 
 
 ### 21sh
 <details><summary></summary>
+
 * The `ctrl-D` and `ctrl-C` keys combination features for line edition and process execution
 * The `;` command line separator
 * Pipes `|`
