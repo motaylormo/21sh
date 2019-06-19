@@ -4,7 +4,8 @@ This is my version of the **[42](https://www.42.us.org/)** cadet project `21sh`.
 The second version of **[minishell](https://github.com/motaylormo/minishell)**, with more features.
 
 # Features
-### Minishell
+<details><summary><h3>Minishell</h3></summary>
+
 * The executable are those you can find in the paths indicated in the `PATH` variable
 * You must deal correctly with the `PATH` and the environment
 * You must implement a series of builtins:
@@ -17,8 +18,10 @@ The second version of **[minishell](https://github.com/motaylormo/minishell)**, 
 * You must manage expansions `$` and `~`
 * Management of signals and in particular `ctrl-C`
 * Management of execution rights in the `PATH`
+</details>
 
-### 21sh
+<details><summary><h3>21sh</h3></summary>
+
 * The `ctrl-D` and `ctrl-C` keys combination features for line edition and process execution
 * The `;` command line separator
 * Pipes `|`
@@ -33,3 +36,5 @@ The second version of **[minishell](https://github.com/motaylormo/minishell)**, 
 	* Go directly to the beginning or the end of a line by pressing home and end.
 	* Write AND edit a command over a few lines. In that case, we would love that `ctrl-UP` and `ctrl-DOWN` allow to go from one line to another in the command while remaining in the same column or otherwise the most appropriate column.
 	* Completely manage quotes and double quotes, even on several lines (expansions excluded).
+
+</details>
