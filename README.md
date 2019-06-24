@@ -35,7 +35,7 @@ The second version of **[minishell](https://github.com/motaylormo/minishell)**, 
 	* Use up and down arrows to navigate through the command history which we will then be able to edit if we feel like it (the line, not the history)
 	* Cut, copy, and/or paste all or part of a line using the key sequence you prefer.
 	* Move directly by word towards the left or the right using `ctrl-LEFT` and `ctrl-RIGHT` or any other reasonable combination of keys.
-	* Go directly to the beginning or the end of a line by pressing home and end.
+	* Go directly to the beginning or the end of a line by pressing `home` and `end`.
 	* Write AND edit a command over a few lines. In that case, we would love that `ctrl-UP` and `ctrl-DOWN` allow to go from one line to another in the command while remaining in the same column or otherwise the most appropriate column.
 	* Completely manage quotes and double quotes, even on several lines (expansions excluded).
 
