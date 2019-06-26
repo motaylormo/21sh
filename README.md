@@ -36,7 +36,7 @@ The second version of **[minishell](https://github.com/motaylormo/minishell)**, 
 * A line edition feature using the `termcaps` library. You must at least manage the following features
 	* Edit the line where the cursor is located
 	* Move the cursor left and right to be able to edit the line at a specific location. Obviously new characters have to be inserted between the existing ones similarly to a classic shell.
-		* Move directly by word towards the left or the right using `ctrl-LEFT` and `ctrl-RIGHT` or any other reasonable combination of keys.
+		* Move directly by word towards the left or the right using `ctrl-LEFT` and `ctrl-RIGHT` or any other reasonable combination of keys. **(Does not appear to be a thing in real!shell?)**
 		* Go directly to the beginning or the end of a line by pressing `home` and `end`.
 	* Use up and down arrows to navigate through the command history which we will then be able to edit if we feel like it (the line, not the history)
 	* Cut, copy, and/or paste all or part of a line using the key sequence you prefer.
