@@ -36,13 +36,13 @@ The second version of **[minishell](https://github.com/motaylormo/minishell)**, 
 	* `[n]>>word` : create and/or open file 'word' for appending on the specified file descriptor (2.7.3)
   * Here-Document
 	* `[n]<<word` : redirects subsequent lines read by the shell to the input of a command (2.7.4)
-* File descriptor aggregation
+* File descriptor Duplication
   * Duplicating Input File Descriptor
 	* `[n]<&word` : duplicate one input file descriptor from another, or close one. (2.7.5)
   * Duplicating Output File Descriptor
 	* `[n]>&word` : duplicate one output file descriptor from another, or close one. (2.7.6)
   * Open File Descriptors for Reading and Writing
-	* `[*n*]<>*word*` : open file that is the expansion of *word* for reading and writing on *n* or stdin if *n* is unspecified. (2.7.7)
+	* `[n]<>word` : open file that is the expansion of *word* for reading and writing on *n* or stdin if *n* is unspecified. (2.7.7)
 * A line editing feature using the `termcaps` library. You must at least implement the following features
 	* Edit the line where the cursor is located
 	* Move the cursor left and right to be able to edit the line at a specific location. Obviously new characters have to be inserted between the existing ones similarly to a classic shell.
