@@ -7,33 +7,32 @@ The second version of **[minishell](https://github.com/motaylormo/minishell)**, 
 ### Minishell
 <details><summary></summary>
 
+* You must manage the errors without using `errno`, by displaying a message adapted to the error output
 * The executable are those you can find in the paths indicated in the `PATH` variable
-* You must deal correctly with the `PATH` and the environment
-* You must implement a series of builtins:
+* Deal correctly with the `PATH` and the environment
+* Implement a series of builtins:
 	* `echo`
 	* `cd`
 	* `setenv`
 	* `unsetenv`
 	* `env`
 	* `exit`
-* You must implement expansion of variable references `$` and the tilde `~`
-* Management of signals and in particular `C-c` (`SIGINT`)
-* Management of execution rights in the `PATH` environment variable
+* Implement expansion of variable references `$` and the tilde `~`
 </details>
 
 ### 21sh
 <details><summary></summary>
 
-* The `C-d` and `C-c` keys combination features for line edition and process execution
+* The `C-d` (EOF) and `C-c` (`SIGINT`) keys combination features for line edition and process execution
 * The `;` command line separator
 * Pipes `|`
 * The 4 following redirections which follow the general format of `[n]redir-op word`:
   * Redirecting Input
-	* `[n]<word`  : open file 'word' for reading on the specified file descriptor (2.7.1)
+	* `[n]<word`  : open file _word_ for reading on the specified file descriptor (2.7.1)
   * Redirecting Output
-	* `[n]>word`  : create and/or open file 'word' for writing on the specified file descriptor (2.7.2)
+	* `[n]>word`  : create and/or open file _word_ for writing on the specified file descriptor (2.7.2)
   * Appending Redirected Output
-	* `[n]>>word` : create and/or open file 'word' for appending on the specified file descriptor (2.7.3)
+	* `[n]>>word` : create and/or open file _word_ for appending on the specified file descriptor (2.7.3)
   * Here-Document
 	* `[n]<<word` : redirects subsequent lines read by the shell to the input of a command (2.7.4)
 * File descriptor Duplication
@@ -42,10 +41,10 @@ The second version of **[minishell](https://github.com/motaylormo/minishell)**, 
   * Duplicating Output File Descriptor
 	* `[n]>&word` : duplicate one output file descriptor from another, or close one. (2.7.6)
   * Open File Descriptors for Reading and Writing
-	* `[n]<>word` : open file that is the expansion of *word* for reading and writing on *n* or stdin if *n* is unspecified. (2.7.7)
-* A line editing feature using the `termcaps` library. You must at least implement the following features
+	* `[n]<>word` : open file that is the expansion of _word_ for reading and writing on _n_ or stdin if _n_ is unspecified. (2.7.7)
+* A line editing feature using the `termcaps` library. Implement at least the following features:
 	* Edit the line where the cursor is located
-	* Move the cursor left and right to be able to edit the line at a specific location. Obviously new characters have to be inserted between the existing ones similarly to a classic shell.
+	* Move the cursor left and right to be able to edit the line at a specific location. New characters have to be inserted between the existing ones similarly to a classic shell.
 		* Move directly by word towards the left or the right using `C-left`(`M-b`) and `C-right`(`M-b`) or any other reasonable combination of keys.
 		* Go directly to the beginning or the end of a line by pressing `home`(`C-a`) and `end`(`C-e`).
 	* Use up and down arrows to navigate through the command history which we will then be able to edit if we feel like it (the line, not the history)
