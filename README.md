@@ -47,9 +47,10 @@ The second version of **[minishell](https://github.com/motaylormo/minishell)**, 
 		* `delete` (`C-d`) forward delete character
 		* `backspace` backward delete character
 	* Move the cursor left and right to be able to edit the line at a specific location. New characters have to be inserted between the existing ones similarly to a classic shell.
-		* Move directly by word towards the left or the right using `C-left`(`M-b`) and `C-right`(`M-b`) or any other reasonable combination of keys.
+		* `left` and `right`
+		* Move directly by word towards the left or the right using `C-left`(`M-b`) and `C-right`(`M-b`)
 		* Go directly to the beginning or the end of a line by pressing `home`(`C-a`) and `end`(`C-e`).
-	* Use up and down arrows to navigate through the command history which we will then be able to edit if we feel like it (the line, not the history)
+	* Use `up` and `down` arrows to navigate through the command history which we will then be able to edit (the line, not the history)
 	* Cut, copy, and/or paste all or part of a line using the key sequence you prefer.
         * `C-k` : cut/kill current line contents from cursor position to the end of the line, into the temp-buffer.
         * `C-y` : paste/yank the current temp-buffer/kill-ring contents to cursor position.
