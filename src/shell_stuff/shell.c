@@ -6,7 +6,7 @@
 /*   By: mtaylor <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 14:18:43 by mtaylor           #+#    #+#             */
-/*   Updated: 2019/06/16 14:18:44 by mtaylor          ###   ########.fr       */
+/*   Updated: 2019/06/28 01:22:19 by callen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,16 +22,36 @@ static const t_command	g_builtins[] = {
 	{ (NULL), (NULL) },
 };
 
+/*
+** Temporary fix-it until strvec and strlist lib are intergrated properly
+*/
+void		ft_matrixdel(char ***arrayp)
+{
+	register int i;
+
+	if (!arrayp || !*arrayp)
+		return ;
+	i = -1;
+	while ((*arrayp)[++i] != NULL)
+		free((*arrayp)[i]);
+	free(*arrayp);
+	*arrayp = NULL;
+}
+
 static int	path(char **argv)
 {
 	char	**path_arr;
+	char	*s;
 	char	exec_path[PATH_MAX + 1];
 
 	if ((path_arr = ft_strsplit(find_env("PATH"), ':')))
 	{
 		for (int i = 0; path_arr[i]; ++i)
 		{
-			ft_cpycat_path(exec_path, path_arr[i], argv[0]);
+			s = ft_strjoin(path_arr[i], "/");
+			s = ft_strjoin_free(s, *argv, 'L');
+			ft_strcpy(exec_path, s);
+			/* ft_cpycat_path(exec_path, path_arr[i], argv[0]); */
 			if (access(exec_path, F_OK) == 0)
 			{
 				run_executable(exec_path, argv);

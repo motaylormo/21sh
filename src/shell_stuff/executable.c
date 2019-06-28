@@ -6,11 +6,13 @@
 /*   By: mtaylor <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/17 11:50:46 by mtaylor           #+#    #+#             */
-/*   Updated: 2019/06/17 11:50:47 by mtaylor          ###   ########.fr       */
+/*   Updated: 2019/06/28 01:04:15 by callen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sh21.h"
+
+extern void	ft_matrixdel(char ***arrayp);
 
 /*
 **	Make an envp to pass to a program that's the same as the working env

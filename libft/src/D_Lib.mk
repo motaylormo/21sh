@@ -1,5 +1,5 @@
-CC ?= clang
-SHELL ?= /bin/sh
+CC = clang
+SHELL = /bin/sh
 
 INCDIR = ../include
 DEBUG_CCFLAGS = -Wall -Wextra -g -fno-omit-frame-pointer
@@ -27,7 +27,6 @@ d_libft.a: ft_lstadd_tail.o
 d_libft.a: pf_printf_ls.o
 d_libft.a: pf_printf_dtoa_lg_le.o
 d_libft.a: ft_isspace.o
-d_libft.a: fq_queue.o
 d_libft.a: pf_printf_g_e.o
 d_libft.a: ft_strcspn.o
 d_libft.a: ft_strncpy.o

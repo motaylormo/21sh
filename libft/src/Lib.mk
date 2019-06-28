@@ -1,6 +1,6 @@
-CC ?= clang
-SHELL ?= /bin/sh
-RM ?= rm -f
+CC = clang
+SHELL = /bin/sh
+RM = rm -f
 
 INCDIR = ../include
 CCFLAGS = -Wall -Wextra -Werror
@@ -28,7 +28,6 @@ libft.a: ft_lstadd_tail.o
 libft.a: pf_printf_ls.o
 libft.a: pf_printf_dtoa_lg_le.o
 libft.a: ft_isspace.o
-libft.a: fq_queue.o
 libft.a: pf_printf_g_e.o
 libft.a: ft_strcspn.o
 libft.a: ft_strncpy.o

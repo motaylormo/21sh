@@ -1,5 +1,5 @@
-SHELL ?= /bin/sh
-RM ?= rm -f
+SHELL = /bin/sh
+RM = rm -f
 
 .PHONY: all
 all:

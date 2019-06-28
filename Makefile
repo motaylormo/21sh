@@ -6,17 +6,21 @@
 #    By: mtaylor <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/06/10 08:42:00 by mtaylor           #+#    #+#              #
-#    Updated: 2019/06/22 18:30:01 by callen           ###   ########.fr        #
+#    Updated: 2019/06/28 00:23:55 by callen           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = 21sh
 FLAGS = -Wall -Wextra -Werror -g
 
-LIBFT_PATH = ./libft/
-LIB = -I $(LIBFT_PATH) $(addprefix $(LIBFT_PATH), libft.a) -lcurses
+CC = clang
+RM = rm -f
 
-INC	= -I ./inc/
+LIBFT_PATH = libft
+LIB = -I$(LIBFT_PATH)/include -L$(LIBFT_PATH) -lft -lcurses
+
+INCDIR = include
+INC	= -I$(INCDIR)
 
 BUILTINS = builtin_echo.c \
 			builtin_cd.c \
@@ -55,18 +59,20 @@ SRC = $(addprefix ./src/, $(FILES))
 all: $(NAME)
 
 $(NAME):
-	make -s -C $(LIBFT_PATH)
-	gcc $(LIB) $(SRC) $(INC) -o $(NAME)
+	make -s -C $(LIBFT_PATH) all
+	$(CC) $(LIB) $(SRC) $(INC) -o $(NAME)
 
 .PHONY: debug
+debug: LIB =-Ilibft/include libft/d_libft.a -lcurses
 debug:
-	make -s -C $(LIBFT_PATH)
-	gcc $(FLAGS) $(LIB) $(SRC) $(INC) -o $(NAME)
+	make -s -C $(LIBFT_PATH) debug
+	$(CC) $(FLAGS) $(LIB) $(SRC) $(INC) -o $(NAME)
 
 .PHONY: fsan
+fsan: LIB =-Ilibft/include libft/a_libft.a -lcurses
 fsan:
-	make -s -C $(LIBFT_PATH)
-	gcc $(FLAGS) -fsanitize=address $(LIB) $(SRC) $(INC) -o $(NAME)
+	make -s -C $(LIBFT_PATH) asan
+	$(CC) $(FLAGS) -fsanitize=address $(LIB) $(SRC) $(INC) -o $(NAME)
 
 .PHONY: clean
 clean:
@@ -75,8 +81,8 @@ clean:
 .PHONY: fclean
 fclean: clean
 	make -s -C $(LIBFT_PATH) fclean
-	rm -f $(NAME)
-	rm -f -R $(addsuffix .dSYM, $(NAME))
+	$(RM) $(NAME)
+	$(RM) -R $(addsuffix .dSYM, $(NAME))
 
 .PHONY: re
 re: fclean all
