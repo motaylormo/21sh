@@ -73,8 +73,11 @@ A line editing feature using the `termcaps` library. Implement at least the foll
 
 * Write AND edit a command over a few lines. In that case, we would love that `C-up`(`C-p`) and `C-down`(`C-n`) allow to go from one line to another in the command while remaining in the same column or otherwise the most appropriate column.
 * Completely manage quotes and double quotes, even on several lines (expansions excluded).
-	* `'` Single quotes suppress normal expansions and preserve whitespace in the enclosed string
-	* `"` Double quotes preserve whitespace and allow for variable expansion but not tilde expansion
+
+| ? | ? | ?
+| - | - | -
+| Single quotes | `'` | suppress normal expansions and preserve whitespace in the enclosed string
+| Double quotes | `"` | preserve whitespace and allow for variable expansion but not tilde expansion
 
 [important reference](http://pubs.opengroup.org/onlinepubs/9699919799/)
 
