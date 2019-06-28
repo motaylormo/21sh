@@ -41,6 +41,8 @@ The second version of **[minishell](https://github.com/motaylormo/minishell)**, 
 | Duplicating Output File Descriptor | `[n]>&word` | duplicate one output file descriptor from another, or close one | 2.7.6
 | Open File Descriptors for Reading and Writing | `[n]<>word` | open file that is the expansion of _word_ for reading and writing on _n_ or stdin if _n_ is unspecified | 2.7.7
 
+[important reference](http://pubs.opengroup.org/onlinepubs/9699919799/)
+
 ### Line editing
 A line editing feature using the `termcaps` library. Implement at least the following features:
 * Edit the line where the cursor is located:
@@ -77,7 +79,5 @@ A line editing feature using the `termcaps` library. Implement at least the foll
 | - | - | -
 | Single quotes | `'` | suppress normal expansions and preserve whitespace in the enclosed string
 | Double quotes | `"` | preserve whitespace and allow for variable expansion but not tilde expansion
-
-[important reference](http://pubs.opengroup.org/onlinepubs/9699919799/)
 
 </details>
