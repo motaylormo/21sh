@@ -89,7 +89,7 @@ A line editing feature using the `termcaps` library. Implement at least the foll
 * ft_cpycat_path (checks if there's a `/` at the end, and adds one only if there's not) [shell.c]
 
 | Campus    | Website                   | Location
-| --------- | ------------------------- | -------- |
+| --------: | :-----------------------: | -------- |
 | Paris     | https://www.42.fr/        | 96 Boulevard Bessières<br>Paris, France
 | Fremont   | https://www.42.us.org/    | 6600 Dumbarton Cir,<br>Fremont, United States
 | Angoulême |                           | 49-51 Boulevard Besson Bey<br>Angoulême, France
