@@ -64,6 +64,3 @@ tags
 21sh
 d_21sh
 a_21sh
-.dir-locals*.el
-.project
-.projectile
