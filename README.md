@@ -27,38 +27,54 @@ The second version of **[minishell](https://github.com/motaylormo/minishell)**, 
 * The `;` command line separator
 * Pipes `|`
 * The 4 following redirections which follow the general format of `[n]redir-op word`:
-  * Redirecting Input
-	* `[n]<word`  : open file _word_ for reading on the specified file descriptor (2.7.1)
-  * Redirecting Output
-	* `[n]>word`  : create and/or open file _word_ for writing on the specified file descriptor (2.7.2)
-  * Appending Redirected Output
-	* `[n]>>word` : create and/or open file _word_ for appending on the specified file descriptor (2.7.3)
-  * Here-Document
-	* `[n]<<word` : redirects subsequent lines read by the shell to the input of a command (2.7.4)
+
+| ? | ? | ? | ?
+| - | - | - | -
+| Redirecting Input  | `[n]<word` | open file _word_ for reading on the specified file descriptor | 2.7.1
+| Redirecting Output | `[n]>word` | create and/or open file _word_ for writing on the specified file descriptor | 2.7.2
+| Appending Redirected Output | `[n]>>word` | create and/or open file _word_ for appending on the specified file descriptor | 2.7.3
+| Here-Document | `[n]<<word` | redirects subsequent lines read by the shell to the input of a command | 2.7.4
+
 * File descriptor Duplication
-  * Duplicating Input File Descriptor
-	* `[n]<&word` : duplicate one input file descriptor from another, or close one. (2.7.5)
-  * Duplicating Output File Descriptor
-	* `[n]>&word` : duplicate one output file descriptor from another, or close one. (2.7.6)
-  * Open File Descriptors for Reading and Writing
-	* `[n]<>word` : open file that is the expansion of _word_ for reading and writing on _n_ or stdin if _n_ is unspecified. (2.7.7)
-* A line editing feature using the `termcaps` library. Implement at least the following features:
-	* Edit the line where the cursor is located
-		* `delete` (`C-d`) forward delete character
-		* `backspace` backward delete character
-	* Move the cursor left and right to be able to edit the line at a specific location. New characters have to be inserted between the existing ones similarly to a classic shell.
-		* `left` and `right`
-		* Move directly by word towards the left or the right using `C-left`(`M-b`) and `C-right`(`M-f`)
-		* Go directly to the beginning or the end of a line by pressing `home`(`C-a`) and `end`(`C-e`).
-	* Use `up` and `down` arrows to navigate through the command history which we will then be able to edit (the line, not the history)
-	* Cut, copy, and/or paste all or part of a line using the key sequence you prefer.
-        * `C-k` : cut/kill current line contents from cursor position to the end of the line, into the temp-buffer.
-        * `C-y` : paste/yank the current temp-buffer/kill-ring contents to cursor position.
-        * `C-w` : cut/kill the immediately preceeding word into the temp-buffer, including any trailing whitespace.
-	* Write AND edit a command over a few lines. In that case, we would love that `C-up`(`C-p`) and `C-down`(`C-n`) allow to go from one line to another in the command while remaining in the same column or otherwise the most appropriate column.
-	* Completely manage quotes and double quotes, even on several lines (expansions excluded).
-        * `'` Single quotes suppress normal expansions and preserve whitespace in the enclosed string
-        * `"` Double quotes preserve whitespace and allow for variable expansion but not tilde expansion
+
+| ? | ? | ? | ?
+| - | - | - | -
+| Duplicating Input File Descriptor | `[n]<&word` | duplicate one input file descriptor from another, or close one | 2.7.5
+| Duplicating Output File Descriptor | `[n]>&word` | duplicate one output file descriptor from another, or close one | 2.7.6
+| Open File Descriptors for Reading and Writing | `[n]<>word` | open file that is the expansion of _word_ for reading and writing on _n_ or stdin if _n_ is unspecified | 2.7.7
+
+A line editing feature using the `termcaps` library. Implement at least the following features:
+* Edit the line where the cursor is located:
+
+| ? | ? | ?
+| - | - | -
+| `delete` | `C-d` | forward delete character
+| `backspace` | | backward delete character
+
+* Move the cursor and be able to edit the line at a specific location:
+
+| ? | ? | ?
+| - | - | -
+| `left` | | move cursor 1 character left
+| `right` | | move cursor 1 character right
+| `C-left` | `M-b` | move cursor 1 word left
+| `C-right` | `M-f` | move cursor 1 word right
+| `home` | `C-a` | move cursor to beginning of line
+| `end` | `C-e` | move cursor to end of line
+
+* Use `up` and `down` arrows to navigate through the command history which we will then be able to edit (the line, not the history)
+* Cut, copy, and/or paste all or part of a line using the key sequence you prefer:
+
+| ? | ?
+| - | -
+| `C-k` | cut current line from cursor position to the end of the line
+| `C-w` | cut the immediately preceeding word, including any trailing whitespace.
+| `C-y` | paste the current temp-buffer contents to cursor position
+
+* Write AND edit a command over a few lines. In that case, we would love that `C-up`(`C-p`) and `C-down`(`C-n`) allow to go from one line to another in the command while remaining in the same column or otherwise the most appropriate column.
+* Completely manage quotes and double quotes, even on several lines (expansions excluded).
+	* `'` Single quotes suppress normal expansions and preserve whitespace in the enclosed string
+	* `"` Double quotes preserve whitespace and allow for variable expansion but not tilde expansion
 
 [important reference](http://pubs.opengroup.org/onlinepubs/9699919799/)
 
