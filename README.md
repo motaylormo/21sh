@@ -7,7 +7,7 @@ The second version of **[minishell](https://github.com/motaylormo/minishell)**, 
 ### Minishell
 <details><summary></summary>
 
-* You must manage the errors without using `errno`, by displaying a message adapted to the error output
+* Manage the errors without using `errno`, by displaying a message adapted to the error output
 * The executable are those you can find in the paths indicated in the `PATH` variable
 * Deal correctly with the `PATH` and the environment
 * Implement a series of builtins:
