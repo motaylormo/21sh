@@ -44,6 +44,8 @@ The second version of **[minishell](https://github.com/motaylormo/minishell)**, 
 	* `[n]<>word` : open file that is the expansion of _word_ for reading and writing on _n_ or stdin if _n_ is unspecified. (2.7.7)
 * A line editing feature using the `termcaps` library. Implement at least the following features:
 	* Edit the line where the cursor is located
+		* `delete` (`C-d`) forward delete character
+		* `backspace` backward delete character
 	* Move the cursor left and right to be able to edit the line at a specific location. New characters have to be inserted between the existing ones similarly to a classic shell.
 		* Move directly by word towards the left or the right using `C-left`(`M-b`) and `C-right`(`M-b`) or any other reasonable combination of keys.
 		* Go directly to the beginning or the end of a line by pressing `home`(`C-a`) and `end`(`C-e`).
@@ -51,7 +53,6 @@ The second version of **[minishell](https://github.com/motaylormo/minishell)**, 
 	* Cut, copy, and/or paste all or part of a line using the key sequence you prefer.
         * `C-k` : cut/kill current line contents from cursor position to the end of the line, into the temp-buffer.
         * `C-y` : paste/yank the current temp-buffer/kill-ring contents to cursor position.
-        * `C-d` : forward delete character, similarly to how the `delete` functions.
         * `C-w` : cut/kill the immediately preceeding word into the temp-buffer, including any trailing whitespace.
 	* Write AND edit a command over a few lines. In that case, we would love that `C-up`(`C-p`) and `C-down`(`C-n`) allow to go from one line to another in the command while remaining in the same column or otherwise the most appropriate column.
 	* Completely manage quotes and double quotes, even on several lines (expansions excluded).
