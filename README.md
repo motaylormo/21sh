@@ -17,6 +17,7 @@ The second version of **[minishell](https://github.com/motaylormo/minishell)**, 
 	* `env`
 	* `exit`
 * Implement expansion of variable references `$` and the tilde `~`
+***
 </details>
 
 <details><summary> <b><big>21sh</big></b> </summary>
