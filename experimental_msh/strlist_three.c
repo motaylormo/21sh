@@ -113,4 +113,5 @@ void		strlist_sort(t_strlst *sl)
 {
 	if (sl == 0 || sl->list_len == 0 || sl->list == 0)
 		return ;
+	strvec_sort(sl->list);
 }

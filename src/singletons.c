@@ -50,3 +50,11 @@ int		window_width(void)
 	ioctl(TERM_FD, TIOCGWINSZ, &argp);
 	return (argp.ws_col);
 }
+
+void	ft_cpycat_path(char *dst, const char *src, const char *bin)
+{
+	ft_strcpy(dst, src);
+	if (dst[ft_strlen(dst) - 1] != '/')
+		ft_strcat(dst, "/");
+	ft_strcat(dst, bin);
+}

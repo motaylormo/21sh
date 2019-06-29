@@ -17,7 +17,7 @@ t_strlst	*strlist_new(int n)
 	t_strlst		*ret;
 	register int	i;
 
-	ret = malloc(sizeof(t_strlst));
+	ret = malloc(sizeof(*ret));
 	if (n)
 	{
 		ret->list = strvec_new(n + 1);

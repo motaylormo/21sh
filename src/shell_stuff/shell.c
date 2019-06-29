@@ -48,10 +48,7 @@ static int	path(char **argv)
 	{
 		for (int i = 0; path_arr[i]; ++i)
 		{
-			s = ft_strjoin(path_arr[i], "/");
-			s = ft_strjoin_free(s, *argv, 'L');
-			ft_strcpy(exec_path, s);
-			/* ft_cpycat_path(exec_path, path_arr[i], argv[0]); */
+			ft_cpycat_path(exec_path, path_arr[i], argv[0]);
 			if (access(exec_path, F_OK) == 0)
 			{
 				run_executable(exec_path, argv);

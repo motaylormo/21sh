@@ -18,7 +18,7 @@ char		**strvec_from_word_list(t_wlst *lst, int alloc, int start, int *ip)
 	char	**arr;
 
 	count = list_length((t_glist*)lst);
-	arr = malloc((1 + count + start) * sizeof(char*));
+	arr = malloc((1 + count + start) * sizeof(*arr));
 	count = -1;
 	while (++count < start)
 		arr[count] = NULL;
@@ -74,7 +74,7 @@ t_strlst	*strlist_from_word_list(t_wlst *list, int alloc, int si, int *ip)
 		return (NULL);
 	}
 	slen = list_length((t_glist*)list);
-	ret = malloc(sizeof(t_strlst));
+	ret = malloc(sizeof(*ret));
 	ret->list = strvec_from_word_list(list, alloc, si, &len);
 	ret->list_size = slen + si;
 	ret->list_len = len;

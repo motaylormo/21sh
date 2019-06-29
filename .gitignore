@@ -57,6 +57,9 @@ dkms.conf
 .nfs*
 .*.swp
 
+# Visual Studio Code
+.vscode
+
 # Project
 tags
 *TAGS

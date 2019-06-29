@@ -58,12 +58,21 @@ char		**strvec_copy(char **array)
 	char			**ret;
 
 	len = strvec_len(array);
-	if ((ret = malloc(sizeof(char*) * (len + 1))) == 0)
+	ret = malloc((len + 1) * sizeof(*ret));
+	if (ret == NULL)
 		return (NULL);
 	i = -1;
 	while (++i < len)
-		if ((ret[i] = STRDUP(array[i])) == 0)
+	{
+		ret[i] = STRDUP(array[i]);
+		if (ret[i] == NULL)
+		{
+			while (i >= 0)
+				free(ret[i--]);
+			free(ret);
 			return (NULL);
+		}
+	}
 	return (ret);
 }
 
