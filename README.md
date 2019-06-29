@@ -87,17 +87,3 @@ A line editing feature using the `termcaps` library. Implement at least the foll
 * ft_matrixdel [builtin_exit.c, shell.c]
 * ft_iswhitespace [command_line.c, str_to_argv.c]
 * ft_cpycat_path (checks if there's a `/` at the end, and adds one only if there's not) [shell.c]
-
-| Campus    | Website                   | Location
-| --------: | :-----------------------: | -------- |
-| Paris     | https://www.42.fr/        | 96 Boulevard Bessières<br>Paris, France
-| Fremont   | https://www.42.us.org/    | 6600 Dumbarton Cir,<br>Fremont, United States
-| Angoulême |                           | 49-51 Boulevard Besson Bey<br>Angoulême, France
-| Rio       | https://www.42.rio/       | AQWA Corporate<br>Via Binário do Porto 299<br>Santo Cristo, Rio de Janeiro, Brasil
-| São Paulo | https://www.42sp.org.br/  | Rua Aspicuelta 422,<br>Vila Madalena, São Paulo, Brasil
-| Jakarta   |                           | Menara Astra<br>Jalan Sudirman Kav 5-6<br>Jakarta, Indonesia
-| Yerevan   |                           | TUMO, 16 Halabyan St<br>Yerevan, Armenia
-| Tokyo     |                           | Sumitomo Fudosan Roppongi Grand Tower<br>3-2-1 Roppongi<br>Minato-ku, Tokyo, Japan
-| Bogotá    |                           | Carrera 15 No. 93 A-10,<br>Bogotá, Colombia
-| Madrid    | https://www.42madrid.com/ | Ronda de la Comunicación, 2,<br>Madrid, Spain
-| Québec    | https://www.42quebec.com/ | 688 Boulevard Charest Est<br>Québec, Canada
