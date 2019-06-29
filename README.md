@@ -4,7 +4,7 @@ This is my version of the **[42](https://www.42.us.org/)** cadet project `21sh`.
 The second version of **[minishell](https://github.com/motaylormo/minishell)**, with more features.
 
 # Features
-<details><summary><h2>Minishell</h2></summary>
+<details><summary> <b><big>Minishell</big></b> </summary>
 
 * Manage the errors without using `errno`, by displaying a message adapted to the error output
 * The executable are those you can find in the paths indicated in the `PATH` variable
@@ -19,7 +19,7 @@ The second version of **[minishell](https://github.com/motaylormo/minishell)**, 
 * Implement expansion of variable references `$` and the tilde `~`
 </details>
 
-<details><summary><h2>21sh</h2></summary>
+<details><summary> <b><big>21sh</big></b> </summary>
 
 * The `C-d` (EOF) and `C-c` (`SIGINT`) keys combination features for line edition and process execution
 * The `;` command line separator
