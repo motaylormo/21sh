@@ -20,7 +20,6 @@ The second version of **[minishell](https://github.com/motaylormo/minishell)**, 
 * Implement expansion of variable references `$` and the tilde `~`
 </details>
 
-***
 ## 21sh
 <details><summary> </summary>
 
