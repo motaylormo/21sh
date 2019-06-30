@@ -54,8 +54,12 @@ static int	delete_char(int *cursor, char *line)
 	return (0);
 }
 
+/*
+** 'C-f' and 'C-b' seem to increase the limit of cursor
+*/
 void		edit_key(int key, char *line, int *cursor)
 {
+	// ft_dprintf(2, "|DBG: edit_key key(%d) cursor(%d)|\n", key,*cursor);
 	if (key == key_left)
 		cursor_left(cursor);
 	if (key == key_right)

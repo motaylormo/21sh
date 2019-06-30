@@ -22,14 +22,34 @@ static const t_command	g_builtins[] = {
 	{ (NULL), (NULL) },
 };
 
+extern void	ft_cpycat_path(char *dst, const char *src, const char *bin);
+
+/*
+** Temporary fix-it until strvec and strlist lib are intergrated properly
+*/
+ void		ft_matrixdel(char ***arrayp)
+{
+	register int i;
+
+	if (!arrayp || !*arrayp)
+		return ;
+	i = -1;
+	while ((*arrayp)[++i] != NULL)
+		free((*arrayp)[i]);
+	free(*arrayp);
+	*arrayp = NULL;
+}
+
 static int	path(char **argv)
 {
+	int		i;
 	char	**path_arr;
 	char	exec_path[PATH_MAX + 1];
 
 	if ((path_arr = ft_strsplit(find_env("PATH"), ':')))
 	{
-		for (int i = 0; path_arr[i]; ++i)
+		i = -1;
+		while (path_arr[++i])
 		{
 			ft_cpycat_path(exec_path, path_arr[i], argv[0]);
 			if (access(exec_path, F_OK) == 0)
@@ -46,7 +66,10 @@ static int	path(char **argv)
 
 static void	exec_command(char **argv)
 {
-	for (int i = 0; g_builtins[i].str; ++i)
+	int i;
+
+	i = -1;
+	while (g_builtins[++i].str)
 	{
 		if (ft_strequ(argv[0], g_builtins[i].str))
 			return (g_builtins[i].f(argv));
@@ -66,8 +89,8 @@ void		run_shell(void)
 
 	print_prompt();
 	line_ptr = shenv_singleton(NULL)->cl;
-	get_command_line(line_ptr);
-/**/	ft_printf("command line[%s]\n", line_ptr);
+	get_command_line(STDIN_FILENO, line_ptr);
+	ft_dprintf(2, "|DBG: run_shell line(%s)|\n", line_ptr);
 	cls = count_cls(line_ptr);
 	while (cls--)
 	{

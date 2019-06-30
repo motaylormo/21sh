@@ -20,7 +20,9 @@ static const t_key	g_history_keys[] = {
 
 static const t_key	g_edit_keys[] = {
 	{"\e[C", key_right},
+	{"\x06", key_right},
 	{"\e[D", key_left},
+	{"\x02", key_left},
 	{"\x7f", key_backspace},
 	{"\e[3~", key_delete},//	delete
 	{"\x04", key_delete},//		ctrl-d (d = delete)
@@ -44,7 +46,10 @@ static const t_key	g_copypaste_keys[] = {
 
 static int	get_key(char *buf, const t_key arr[])
 {
-	for (int i = 0; arr[i].seq; ++i)
+	int i;
+
+	i = -1;
+	while (arr[++i].seq)
 	{
 		if (ft_strequ(buf, arr[i].seq))
 			return (arr[i].enumcode);
@@ -52,7 +57,34 @@ static int	get_key(char *buf, const t_key arr[])
 	return (0);
 }
 
-void		get_command_line(char *line)
+int		get_prev_word(int cursor, char *line)
+{
+	int word;
+
+	word = cursor;
+	while (word - 1 >= 0 && ft_isspace(line[word - 1]))
+		word--;
+	while (word - 1 >= 0 && !ft_isspace(line[word - 1]))
+		word--;
+	return (word);
+}
+
+int		get_next_word(int cursor, char *line)
+{
+	int word;
+
+	word = cursor;
+	while (line[word] && ft_isspace(line[word]))
+		word++;
+	while (line[word] && !ft_isspace(line[word]))
+		word++;
+	return (word);
+}
+
+/*
+** 31 lines
+*/
+void	get_command_line(int fd, char *line)
 {
 	t_cl_node	*curr;
 	char		buf[BUFF_SIZE + 1];
@@ -65,15 +97,17 @@ void		get_command_line(char *line)
 	ft_bzero(line, LINE_MAX + 1);
 	while (1)
 	{
-		ft_bzero(buf, BUFF_SIZE + 1);
-		ret = read(g_input_fd, buf, BUFF_SIZE);
-		if (ft_strequ(buf, "\n"))
+		ft_bzero(&key, sizeof(t_buf));
+		key.ret = read(fd, key.buf, BUFF_SIZE);
+		// ft_dprintf(2, "|DBG: key.buf(%s)|\n", key.buf);
+		if (ft_strequ(key.buf, "\n"))
+			break ;
+		else if (cursor == 0 && ft_strequ(key.buf, "\x04"))
 		{
-			ft_putchar('\n');
-			add_cl_to_history(line);
-			return ;
+			ft_printf("exit\n");
+			builtin_exit(NULL);
 		}
-		else if ((enumkey = get_key(buf, g_history_keys)))
+		else if ((enumkey = get_key(key, g_history_keys)))
 			get_command_history(enumkey, line, &curr, &cursor);
 		else if ((enumkey = get_key(buf, g_edit_keys)))
 			edit_key(enumkey, line, &cursor);
