@@ -78,6 +78,6 @@ void		run_executable(char *path, char **argv)
 			signal(SIGINT, sig_handler);
 			wait(&process_id);
 		}
-		ft_matrixdel(&envp);
+		strvec_flush(envp);
 	}
 }

@@ -50,10 +50,12 @@ struct	s_env
 	char		cl[LINE_MAX + 1];
 	t_args		*main_args;
 	t_queue		*envlist;
+	int			input_fd;
+	int			output_fd;
 };
 
 /*
-**	Keeping commands functions and strings together
+**	Keeping things together in tables
 */
 typedef struct s_str_w_func	t_command;
 struct	s_str_w_func
@@ -62,36 +64,11 @@ struct	s_str_w_func
 	void	(*f)(char**);
 };
 
-# define BUFF_SIZE 32
-typedef struct s_buf	t_buf;
-struct	s_buf
-{
-	char	buf[BUFF_SIZE + 1];
-	int		ret;
-};
-
-
 typedef struct s_key	t_key;
 struct	s_key
 {
 	char	*seq;
 	int		enumcode;
-};
-
-enum	e_edit_keys{
-	key_up = 1,
-	key_down,
-	key_left,
-	key_right,
-	key_backspace,
-	key_delete,
-	key_home,
-	key_end,
-	key_word_left,
-	key_word_right,
-	key_ctrl_k,
-	key_ctrl_y,
-	key_ctrl_w
 };
 
 /*

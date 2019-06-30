@@ -34,7 +34,7 @@ int		enqueue_env(t_queue *q, char *str)
 	t_node	*n;
 	int		eq_index;
 
-	if ((eq_index = ft_strchrindex(str, '=')) == -1)
+	if ((eq_index = ft_strchri(str, '=')) == -1)
 		return (0);
 	n = ft_memalloc(sizeof(t_node));
 	ft_strncpy(n->label, str, eq_index);

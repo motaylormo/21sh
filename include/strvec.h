@@ -1,19 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   msh_strvec.h                                       :+:      :+:    :+:   */
+/*   strvec.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: callen <callen@student.42.us.org>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/27 23:20:35 by callen            #+#    #+#             */
-/*   Updated: 2019/06/03 01:20:07 by callen           ###   ########.fr       */
+/*   Updated: 2019/06/30 13:59:49 by callen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MSH_STRVEC_H
-# define MSH_STRVEC_H
+#ifndef STRVEC_H
+# define STRVEC_H
 
-# include "msh_command.h"
+# include "command.h"
 
 # include "ft_string.h"
 # include "ft_stdlib.h"
@@ -50,6 +50,7 @@ void		strvec_dispose(char **array);
 int			strvec_remove(char **array, char *name);
 int			strvec_nremove(char **array, char *name, int nl);
 int			strvec_strcmp(register char **s1, register char **s2);
+void		strvec_sort(char **array);
 char		**strvec_from_word_list(t_wlst *lst, int al, int st, int *ip);
 t_wlst		*strvec_to_word_list(char **array, int al, int st);
 
@@ -81,9 +82,7 @@ t_strlst	*strlist_append(t_strlst *m1, t_strlst *m2);
 t_strlst	*strlist_prefix_suffix(t_strlst *l, char *p, char *s);
 void		strlist_print(t_strlst *l, char *pr);
 void		strlist_walk(t_strlst *l, t_shstrlstmapfunc *fn);
+void		strlist_sort(t_strlst *l);
 
-/*
-** void		strlist_sort(t_strlst *l);
-*/
 
 #endif

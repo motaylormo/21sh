@@ -22,36 +22,44 @@ LIB = -I$(LIBFT_PATH)/include -L$(LIBFT_PATH) -lft -lcurses
 INCDIR = include
 INC	= -I$(INCDIR)
 
-BUILTINS = builtin_echo.c \
+BUILTINS =	builtin_echo.c \
 			builtin_cd.c \
 			builtin_setenv.c \
 			builtin_unsetenv.c \
 			builtin_env.c \
 			builtin_exit.c
 
-SH_STUFF = executable.c \
+SH_STUFF =	executable.c \
 			expansion.c \
 			prompt.c \
 			shell.c \
 			str_to_argv.c \
 			cl_semicolon.c
 
-EDIT_LINE = command_line.c \
-			insert_text.c \
+EDIT_LINE =	command_line.c \
+			edit_line_util.c \
 			edit_keys.c \
 			copy_paste.c \
 			command_history.c
 
-FILES = $(addprefix ./builtins/, $(BUILTINS)) \
-		$(addprefix ./shell_stuff/, $(SH_STUFF)) \
-		$(addprefix ./edit_line/, $(EDIT_LINE)) \
+FILES =	$(addprefix builtins/, $(BUILTINS)) \
+		$(addprefix shell_stuff/, $(SH_STUFF)) \
+		$(addprefix edit_line/, $(EDIT_LINE)) \
 		main.c \
 		shenv.c \
 		errors.c \
 		signals.c \
-		singletons.c
+		singletons.c \
+		strvec_one.c \
+		strvec_two.c \
+		strvec_conv.c \
+		generic_list.c \
+		strlist_one.c \
+		strlist_two.c \
+		strlist_three.c \
+		word_list_init.c
 
-SRC = $(addprefix ./src/, $(FILES))
+SRC =	$(addprefix src/, $(FILES))
 
 # **************************************************************************** #
 

@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "msh_strvec.h"
+#include "strvec.h"
 
 /*
 ** Strvec lib/sh/stringvec.c 11 functions

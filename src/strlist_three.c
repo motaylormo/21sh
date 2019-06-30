@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "ft_stdio.h"
-#include "msh_strvec.h"
+#include "strvec.h"
 
 t_strlst	*strlist_append(t_strlst *m1, t_strlst *m2)
 {

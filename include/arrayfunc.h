@@ -1,22 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   msh_arrayfunc.h                                    :+:      :+:    :+:   */
+/*   arrayfunc.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: callen <callen@student.42.us.org>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/27 23:21:05 by callen            #+#    #+#             */
-/*   Updated: 2019/05/28 14:15:52 by callen           ###   ########.fr       */
+/*   Updated: 2019/06/30 14:00:15 by callen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MSH_ARRAYFUNC_H
-# define MSH_ARRAYFUNC_H
+#ifndef ARRAYFUNC_H
+# define ARRAYFUNC_H
 
 # ifdef ARRAY_VARS
 
 /*
-** Must include msh_variables.h before including this file.
+** Must include variables.h before including this file.
 */
 
 /*

@@ -91,23 +91,23 @@ void	get_command_line(int fd, char *line)
 	int			ret;
 	int			cursor;
 	int			enumkey;
-	
+
 	curr = NULL;
 	cursor = 0;
 	ft_bzero(line, LINE_MAX + 1);
 	while (1)
 	{
-		ft_bzero(&key, sizeof(t_buf));
-		key.ret = read(fd, key.buf, BUFF_SIZE);
+		ft_bzero(buf, sizeof(buf)/sizeof(*buf));
+		ret = read(fd, buf, BUFF_SIZE);
 		// ft_dprintf(2, "|DBG: key.buf(%s)|\n", key.buf);
-		if (ft_strequ(key.buf, "\n"))
+		if (ft_strequ(buf, "\n"))
 			break ;
-		else if (cursor == 0 && ft_strequ(key.buf, "\x04"))
+		else if (cursor == 0 && ft_strequ(buf, "\x04"))
 		{
 			ft_printf("exit\n");
 			builtin_exit(NULL);
 		}
-		else if ((enumkey = get_key(key, g_history_keys)))
+		else if ((enumkey = get_key(buf, g_history_keys)))
 			get_command_history(enumkey, line, &curr, &cursor);
 		else if ((enumkey = get_key(buf, g_edit_keys)))
 			edit_key(enumkey, line, &cursor);

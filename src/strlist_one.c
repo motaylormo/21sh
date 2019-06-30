@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "msh_strvec.h"
+#include "strvec.h"
 
 t_strlst	*strlist_new(int n)
 {

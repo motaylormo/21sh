@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "msh_strvec.h"
+#include "strvec.h"
 
 char		**strvec_from_word_list(t_wlst *lst, int alloc, int start, int *ip)
 {

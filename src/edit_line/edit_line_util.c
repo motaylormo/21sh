@@ -39,15 +39,15 @@ void	insert_text(char *buf, int len, char *line, int *cursor)
 	}
 	(*cursor) += len;
 }
-
+#if 0
 int		get_prev_word(int cursor, char *line)
 {
 	int word;
 
 	word = cursor;
-	while (word - 1 >= 0 && ft_iswhitespace(line[word - 1]))
+	while (word - 1 >= 0 && ft_isspace(line[word - 1]))
 		word--;
-	while (word - 1 >= 0 && !ft_iswhitespace(line[word - 1]))
+	while (word - 1 >= 0 && !ft_isspace(line[word - 1]))
 		word--;
 	return (word);
 }
@@ -57,9 +57,10 @@ int		get_next_word(int cursor, char *line)
 	int word;
 
 	word = cursor;
-	while (line[word] && ft_iswhitespace(line[word]))
+	while (line[word] && ft_isspace(line[word]))
 		word++;
-	while (line[word] && !ft_iswhitespace(line[word]))
+	while (line[word] && !ft_isspace(line[word]))
 		word++;
 	return (word);
 }
+#endif

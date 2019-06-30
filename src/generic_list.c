@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "msh_strvec.h"
+#include "strvec.h"
 
 /*
 ** Generic List list.c 3 functions

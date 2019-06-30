@@ -1,37 +1,42 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   word_list_init.c                                   :+:      :+:    :+:   */
+/*   shinfo_structs.h                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: callen <callen@student.42.us.org>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/06/03 00:30:31 by callen            #+#    #+#             */
-/*   Updated: 2019/06/03 00:31:28 by callen           ###   ########.fr       */
+/*   Created: 2019/05/27 23:20:46 by callen            #+#    #+#             */
+/*   Updated: 2019/06/30 13:59:34 by callen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "msh_strvec.h"
+#ifndef SHINFO_STRUCTS_H
+# define SHINFO_STRUCTS_H
 
-/*
-** array.c 2 functions
-*/
+# include <unistd.h>
 
-t_wdtk		*make_bare_word(const char *s)
+typedef struct s_fdbmp	t_fdbmp;
+struct	s_fdbmp
 {
-	t_wdtk *w;
+	int		size;
+	char	*bmp;
+};
 
-	w = malloc(sizeof(*w));
-	w->word = s ? STRSAV(s) : STRSAV("");
-	w->flags = 0;
-	return (w);
-}
+# define FDBMP_SIZE 32
 
-t_wlst		*make_word_list(t_wdtk *x, t_wlst *l)
+# define CTLESC '\001'
+# define CTLNUL '\177'
+
+typedef struct s_uinfo	t_uinfo;
+struct	s_uinfo
 {
-	t_wlst *w;
+	uid_t	uid;
+	uid_t	euid;
+	gid_t	gid;
+	gid_t	egid;
+	char	*user_name;
+	char	*shell;
+	char	*home_dir;
+};
 
-	w = malloc(sizeof(*w));
-	w->word = x;
-	w->next = l;
-	return (w);
-}
+#endif

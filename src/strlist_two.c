@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "msh_strvec.h"
+#include "strvec.h"
 
 int			strlist_remove(t_strlst *sl, char *s)
 {

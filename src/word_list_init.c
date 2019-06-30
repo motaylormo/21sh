@@ -1,43 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   msh_command.h                                      :+:      :+:    :+:   */
+/*   word_list_init.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: callen <callen@student.42.us.org>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/04/16 19:07:27 by callen            #+#    #+#             */
-/*   Updated: 2019/06/03 01:54:01 by callen           ###   ########.fr       */
+/*   Created: 2019/06/03 00:30:31 by callen            #+#    #+#             */
+/*   Updated: 2019/06/03 00:31:28 by callen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MSH_COMMAND_H
-# define MSH_COMMAND_H
-
-# include <unistd.h>
+#include "strvec.h"
 
 /*
-** struct s_wdtk : Structure which represents a word
-**
-** word  - Zero terminated string.
-** flags - Flags associated with this word.
+** array.c 2 functions
 */
 
-typedef struct s_wdtk	t_wdtk;
-struct	s_wdtk
+t_wdtk		*make_bare_word(const char *s)
 {
-	char	*word;
-	int		flags;
-};
+	t_wdtk *w;
 
-/*
-** struct s_wlst : A linked list of words
-*/
+	w = malloc(sizeof(*w));
+	w->word = s ? STRSAV(s) : STRSAV("");
+	w->flags = 0;
+	return (w);
+}
 
-typedef struct s_wlst	t_wlst;
-struct	s_wlst
+t_wlst		*make_word_list(t_wdtk *x, t_wlst *l)
 {
-	t_wlst	*next;
-	t_wdtk	*word;
-};
+	t_wlst *w;
 
-#endif
+	w = malloc(sizeof(*w));
+	w->word = x;
+	w->next = l;
+	return (w);
+}

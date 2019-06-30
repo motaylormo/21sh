@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "msh_strvec.h"
+#include "strvec.h"
 
 void		strvec_dispose(char **array)
 {
@@ -75,10 +75,10 @@ int			strvec_strcmp(register char **s1, register char **s2)
 
 void		strvec_qsort(char **arr, int len)
 {
-	register char	*piv;
-	register char	*tmp;
-	register int	i;
-	register int	j;
+	char	*piv;
+	char	*tmp;
+	int		i;
+	int		j;
 
 	if (len < 2 || !arr || !*arr)
 		return ;

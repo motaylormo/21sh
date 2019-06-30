@@ -27,7 +27,7 @@ static int	count_args(char *str)
 	count = 0;
 	while (*str)
 	{
-		while (*str && ft_iswhitespace(*str))
+		while (*str && ft_isspace(*str))
 			str++;
 		if (*str && QUOTIES(*str) && ft_strchr(str + 1, *str))
 		{
@@ -35,9 +35,9 @@ static int	count_args(char *str)
 			if (str++)
 				count++;
 		}
-		else if (*str && !ft_iswhitespace(*str))
+		else if (*str && !ft_isspace(*str))
 		{
-			while (*str && !ft_iswhitespace(*str))
+			while (*str && !ft_isspace(*str))
 				str++;
 			count++;
 		}
@@ -53,18 +53,18 @@ static char	**get_args(char *str, char **argv, int argc)
 	i = 0;
 	while ((i < argc) && *str)
 	{
-		while (*str && ft_iswhitespace(*str))
+		while (*str && ft_isspace(*str))
 			str++;
 		len = 0;
 		if (*str && QUOTIES(*str) && ft_strchr(str + 1, *str))
 		{
-			if ((len = ft_strchrindex(str + 1, *str)) > 0)
+			if ((len = ft_strchri(str + 1, *str)) > 0)
 				argv[i++] = ft_strsub(str, 1, len);
 			str += len + 2;
 		}
-		else if (*str && !ft_iswhitespace(*str))
+		else if (*str && !ft_isspace(*str))
 		{
-			while (str[len] && !ft_iswhitespace(str[len]))
+			while (str[len] && !ft_isspace(str[len]))
 				len++;
 			argv[i++] = ft_strsub(str, 0, len);
 			str += len;

@@ -24,22 +24,6 @@ static const t_command	g_builtins[] = {
 
 extern void	ft_cpycat_path(char *dst, const char *src, const char *bin);
 
-/*
-** Temporary fix-it until strvec and strlist lib are intergrated properly
-*/
- void		ft_matrixdel(char ***arrayp)
-{
-	register int i;
-
-	if (!arrayp || !*arrayp)
-		return ;
-	i = -1;
-	while ((*arrayp)[++i] != NULL)
-		free((*arrayp)[i]);
-	free(*arrayp);
-	*arrayp = NULL;
-}
-
 static int	path(char **argv)
 {
 	int		i;
@@ -55,11 +39,11 @@ static int	path(char **argv)
 			if (access(exec_path, F_OK) == 0)
 			{
 				run_executable(exec_path, argv);
-				ft_matrixdel(&path_arr);
+				strvec_flush(path_arr);
 				return (1);
 			}
 		}
-		ft_matrixdel(&path_arr);
+		strvec_flush(path_arr);
 	}
 	return (0);
 }
@@ -90,14 +74,14 @@ void		run_shell(void)
 	print_prompt();
 	line_ptr = shenv_singleton(NULL)->cl;
 	get_command_line(STDIN_FILENO, line_ptr);
-	ft_dprintf(2, "|DBG: run_shell line(%s)|\n", line_ptr);
+	/* ft_dprintf(2, "|DBG: run_shell line(%s)|\n", line_ptr); */
 	cls = count_cls(line_ptr);
 	while (cls--)
 	{
 		if ((argv = str_to_argv(line_ptr)))
 		{
 			exec_command(argv);
-			ft_matrixdel(&argv);
+			strvec_flush(argv);
 		}
 		line_ptr = ft_strchr(line_ptr, '\0') + 1;
 		while (*line_ptr == '\0')

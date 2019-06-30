@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   sh21.h                                             :+:      :+:    :+:   */
+/*   21sh.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mtaylor <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/10 08:26:30 by mtaylor           #+#    #+#             */
-/*   Updated: 2019/06/28 00:21:28 by callen           ###   ########.fr       */
+/*   Updated: 2019/06/10 08:26:31 by mtaylor          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,15 +54,38 @@
 # include "libft.h"
 # include "unix_text.h"
 # include "structs.h"
+# include "strvec.h"
+# include "command.h"
+# include "arrayfunc.h"
 
-# define TERM_FD 0
+int g_input_fd;
+int g_output_fd;
+
 # define NAME "21sh"
+# define BUFF_SIZE 32
+
 /*
 **	Colors for the prompt
 */
 # define COLOR1 TXT256("75")
 # define COLOR2 TXT256("36")
 # define COLOR_TRIM TXT256("250")
+
+enum	e_edit_keys{
+	key_up = 1,
+	key_down,
+	key_left,
+	key_right,
+	key_backspace,
+	key_delete,
+	key_home,
+	key_end,
+	key_word_left,
+	key_word_right,
+	key_cut_to_end,
+	key_cut_word,
+	key_paste
+};
 
 enum	e_errors{
 	error_file,
@@ -82,6 +105,7 @@ t_shenv			*shenv_singleton(t_shenv *arg);
 t_cl_list		*history_singleton(void);
 struct termios	*orig_tio_singleton(void);
 int				window_width(void);
+void			ft_cpycat_path(char *d, const char *s, const char *b);
 
 /*
 **	shenv.c
@@ -90,20 +114,18 @@ void		init_shenv(int argc, char **argv, char **envp, char **aplv);
 char		*find_env(char *label);
 int			enqueue_env(t_queue *q, char *str);
 
-
 /*
 **	edit line
 */
 void	get_command_line(int fd, char *line);
-void	insert_text(char *buf, int len, char *line, int *cursor);
 void	edit_key(int key, char *line, int *cursor);
 void	copypaste(int key, char *line, int *cursor);
-
-int		get_prev_word(int cursor, char *line);
-int		get_next_word(int cursor, char *line);
-
 void	add_cl_to_history(char *line);
 void	get_command_history(int key, char *line, t_cl_node **curr, int *cursor);
+
+void	insert_text(char *buf, int len, char *line, int *cursor);
+int		get_prev_word(int cursor, char *line);
+int		get_next_word(int cursor, char *line);
 
 /*
 **	shell_stuff

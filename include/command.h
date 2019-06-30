@@ -1,42 +1,43 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   msh_shell.h                                        :+:      :+:    :+:   */
+/*   command.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: callen <callen@student.42.us.org>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/05/27 23:20:46 by callen            #+#    #+#             */
-/*   Updated: 2019/05/27 23:20:47 by callen           ###   ########.fr       */
+/*   Created: 2019/04/16 19:07:27 by callen            #+#    #+#             */
+/*   Updated: 2019/06/30 13:59:59 by callen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MSH_SHELL_H
-# define MSH_SHELL_H
+#ifndef COMMAND_H
+# define COMMAND_H
 
 # include <unistd.h>
 
-typedef struct s_fdbmp	t_fdbmp;
-struct	s_fdbmp
+/*
+** struct s_wdtk : Structure which represents a word
+**
+** word  - Zero terminated string.
+** flags - Flags associated with this word.
+*/
+
+typedef struct s_wdtk	t_wdtk;
+struct	s_wdtk
 {
-	int		size;
-	char	*bmp;
+	char	*word;
+	int		flags;
 };
 
-# define FDBMP_SIZE 32
+/*
+** struct s_wlst : A linked list of words
+*/
 
-# define CTLESC '\001'
-# define CTLNUL '\177'
-
-typedef struct s_uinfo	t_uinfo;
-struct	s_uinfo
+typedef struct s_wlst	t_wlst;
+struct	s_wlst
 {
-	uid_t	uid;
-	uid_t	euid;
-	gid_t	gid;
-	gid_t	egid;
-	char	*user_name;
-	char	*shell;
-	char	*home_dir;
+	t_wlst	*next;
+	t_wdtk	*word;
 };
 
 #endif
