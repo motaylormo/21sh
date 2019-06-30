@@ -19,29 +19,27 @@ static int	seg_to_copybuf(char *buf, char *str, int start, int end)
 	return (end - start);
 }
 
-void	copypaste(int key, char *line, int *cursor)
+void		copypaste(int key, char *line, int *cursor)
 {
 	static char	buf[LINE_MAX + 1];
 	static int	flag = 0;
 	int			i;
 
-	if (key == key_ctrl_k || key == key_ctrl_w)
+	if (key == key_cut_to_end || key == key_cut_word)
 		flag = 1;
-	//from cursor position to the end of the line
-	if (key == key_ctrl_k)
+	if (key == key_cut_to_end)
 	{
 		i = seg_to_copybuf(buf, line, *cursor, ft_strlen(line));
 		while (i--)
 			edit_key(key_delete, line, cursor);
 	}
-	//the immediately preceeding word into the temp-buffer, including any trailing whitespace
-	if (key == key_ctrl_w)
+	if (key == key_cut_word)
 	{
 		i = seg_to_copybuf(buf, line, get_prev_word(*cursor, line), *cursor);
 		while (i--)
 			edit_key(key_backspace, line, cursor);
 	}
-	if (key == key_ctrl_y && flag == 1)
+	if (key == key_paste && flag == 1)
 		insert_text(buf, ft_strlen(buf), line, cursor);
 //	ft_printf("\ncopybuffer[%s]\n", buf);
 }

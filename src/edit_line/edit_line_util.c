@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   insert_text.c                                      :+:      :+:    :+:   */
+/*   edit_line_util.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mtaylor <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -38,4 +38,28 @@ void	insert_text(char *buf, int len, char *line, int *cursor)
 		ft_memcpy(line + *cursor, buf, len);
 	}
 	(*cursor) += len;
+}
+
+int		get_prev_word(int cursor, char *line)
+{
+	int word;
+
+	word = cursor;
+	while (word - 1 >= 0 && ft_iswhitespace(line[word - 1]))
+		word--;
+	while (word - 1 >= 0 && !ft_iswhitespace(line[word - 1]))
+		word--;
+	return (word);
+}
+
+int		get_next_word(int cursor, char *line)
+{
+	int word;
+
+	word = cursor;
+	while (line[word] && ft_iswhitespace(line[word]))
+		word++;
+	while (line[word] && !ft_iswhitespace(line[word]))
+		word++;
+	return (word);
 }

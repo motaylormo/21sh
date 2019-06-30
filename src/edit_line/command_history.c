@@ -12,21 +12,6 @@
 
 #include "sh21.h"
 
-static void	update_line(char *line, t_cl_node *curr, int *cursor)
-{
-	if (curr)
-	{
-		ft_strcpy(line, curr->cl);
-
-		ft_putstr(tgetstr("im", NULL));
-		ft_putstr(line);
-		ft_putstr(tgetstr("ei", NULL));
-	}
-	else
-		ft_bzero(line, LINE_MAX);
-	*cursor = ft_strlen(line);
-}
-
 static void	clear_line(char *line, int *cursor)
 {
 	while (*cursor > 0)
@@ -35,7 +20,7 @@ static void	clear_line(char *line, int *cursor)
 		edit_key(key_delete, line, cursor);
 }
 
-void	get_command_history(int key, char *line, t_cl_node **curr, int *cursor)
+void		get_command_history(int key, char *line, t_cl_node **curr, int *cursor)
 {
 	t_cl_list	*history;
 
@@ -47,18 +32,18 @@ void	get_command_history(int key, char *line, t_cl_node **curr, int *cursor)
 			*curr = history->top;
 		else if ((*curr)->next != NULL)
 			*curr = (*curr)->next;
-		if (*curr)
-			update_line(line, *curr, cursor);
 	}
 	if (key == key_down)
 	{
 		if (*curr)
 			*curr = (*curr)->prev;
-		update_line(line, *curr, cursor);
 	}
+	if (*curr)
+		insert_text((*curr)->cl, ft_strlen((*curr)->cl), line, cursor);
+
 }
 
-void	add_cl_to_history(char *line)
+void		add_cl_to_history(char *line)
 {
 	t_cl_list	*history;
 	t_cl_node	*node;

@@ -17,7 +17,7 @@
 */
 static int	cursor_left(int *cursor)
 {
-	if (*cursor > 0)//(*cursor - 1 >= 0)
+	if (*cursor > 0)
 	{
 		ft_putstr(tgetstr("le", NULL));
 		(*cursor)--;
@@ -60,7 +60,6 @@ void		edit_key(int key, char *line, int *cursor)
 		cursor_left(cursor);
 	if (key == key_right)
 		cursor_right(cursor, line);
-
 	if (key == key_delete)
 		delete_char(cursor, line);
 	if (key == key_backspace)
@@ -72,7 +71,6 @@ void		edit_key(int key, char *line, int *cursor)
 		while (cursor_left(cursor));
 	if (key == key_end)
 		while (cursor_right(cursor, line));
-	
 	if (key == key_word_left)
 	{
 		int word = get_prev_word(*cursor, line);

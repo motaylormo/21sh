@@ -6,7 +6,7 @@
 /*   By: mtaylor <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/16 14:18:43 by mtaylor           #+#    #+#             */
-/*   Updated: 2019/06/28 01:22:19 by callen           ###   ########.fr       */
+/*   Updated: 2019/06/16 14:18:44 by mtaylor          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,26 +22,9 @@ static const t_command	g_builtins[] = {
 	{ (NULL), (NULL) },
 };
 
-/*
-** Temporary fix-it until strvec and strlist lib are intergrated properly
-*/
-void		ft_matrixdel(char ***arrayp)
-{
-	register int i;
-
-	if (!arrayp || !*arrayp)
-		return ;
-	i = -1;
-	while ((*arrayp)[++i] != NULL)
-		free((*arrayp)[i]);
-	free(*arrayp);
-	*arrayp = NULL;
-}
-
 static int	path(char **argv)
 {
 	char	**path_arr;
-	char	*s;
 	char	exec_path[PATH_MAX + 1];
 
 	if ((path_arr = ft_strsplit(find_env("PATH"), ':')))
@@ -83,7 +66,7 @@ void		run_shell(void)
 
 	print_prompt();
 	line_ptr = shenv_singleton(NULL)->cl;
-	get_command_line(STDIN_FILENO, line_ptr);
+	get_command_line(line_ptr);
 /**/	ft_printf("command line[%s]\n", line_ptr);
 	cls = count_cls(line_ptr);
 	while (cls--)

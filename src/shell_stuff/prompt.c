@@ -45,14 +45,14 @@ void		print_prompt(void)
 	char	*prompt_str;
 
 	if ((prompt_str = find_env("PS1")))
-		ft_printf("%s", prompt_str);
+		ft_putstr(prompt_str);
 	else if ((prompt_str = find_env("PS2")))
-		ft_printf("%s", prompt_str);
+		ft_putstr(prompt_str);
 	else if ((prompt_str = find_env("PS3")))
-		ft_printf("%s", prompt_str);
+		ft_putstr(prompt_str);
 	else if ((prompt_str = find_env("PS4")))
-		ft_printf("%s", prompt_str);
+		ft_putstr(prompt_str);
 	else
 		pwd_prompt();//ft_printf(PROMPT);
-	ft_printf(COLOR_OFF " ");
+	ft_putstr(COLOR_OFF " ");
 }

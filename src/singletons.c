@@ -37,7 +37,7 @@ struct termios	*orig_tio_singleton(void)
 
 	if (flag == 0)
 	{
-		tcgetattr(TERM_FD, &singleton);
+		tcgetattr(g_input_fd, &singleton);
 		flag = 1;
 	}
 	return (&singleton);
@@ -47,14 +47,6 @@ int		window_width(void)
 {
 	struct winsize	argp;
 
-	ioctl(TERM_FD, TIOCGWINSZ, &argp);
+	ioctl(g_input_fd, TIOCGWINSZ, &argp);
 	return (argp.ws_col);
-}
-
-void	ft_cpycat_path(char *dst, const char *src, const char *bin)
-{
-	ft_strcpy(dst, src);
-	if (dst[ft_strlen(dst) - 1] != '/')
-		ft_strcat(dst, "/");
-	ft_strcat(dst, bin);
 }

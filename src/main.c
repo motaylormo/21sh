@@ -12,6 +12,9 @@
 
 #include "sh21.h"
 
+int	g_input_fd = STDIN_FILENO;
+int	g_output_fd = STDOUT_FILENO;
+
 /*
 **	Set up working env
 **	Set up termcaps
@@ -27,12 +30,12 @@ static void	init_terminal(void)
 		handle_error(error_env_var, "TERM");
 		exit(0);
 	}
-	tcgetattr(TERM_FD, &newtio);
+	tcgetattr(g_input_fd, &newtio);
 	newtio.c_lflag &= ~(ICANON | ECHO | ECHONL | IXON);
 	newtio.c_cc[VMIN] = 26;//so C-y can be paste
 	newtio.c_cc[VMIN] = 1;
 	newtio.c_cc[VTIME] = 0;
-	tcsetattr(TERM_FD, 0, &newtio);
+	tcsetattr(g_input_fd, 0, &newtio);
 	tgetent(NULL, term_ptr);
 
 /*	ft_printf("VEOF: %d\n", newtio.c_cc[VEOF]);
@@ -64,5 +67,4 @@ int			main(int argc, char **argv, char **envp, char **aplv)
 		signal_catcher();
 		run_shell();
 	}
-//	tcsetattr(TERM_FD, 0, orig_tio_singleton());
 }

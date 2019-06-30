@@ -19,9 +19,9 @@ void	builtin_echo(char **argv)
 	i = 0;
 	while (argv[++i])
 	{
-		ft_printf("%s", argv[i]);
+		ft_dprintf(g_output_fd, "%s", argv[i]);
 		if (argv[i + 1])
-			ft_printf("%c", ' ');
+			ft_dprintf(g_output_fd, " ");
 	}
-	ft_printf("\n");
+	ft_dprintf(g_output_fd, "\n");
 }
