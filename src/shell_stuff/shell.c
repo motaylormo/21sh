@@ -22,8 +22,6 @@ static const t_command	g_builtins[] = {
 	{ (NULL), (NULL) },
 };
 
-extern void	ft_cpycat_path(char *dst, const char *src, const char *bin);
-
 static int	path(char **argv)
 {
 	int		i;

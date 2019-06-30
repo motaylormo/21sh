@@ -13,6 +13,8 @@
 #ifndef STRUCTS_H
 # define STRUCTS_H
 
+# include <limits.h>
+
 /*
 **	For storing working env
 */
