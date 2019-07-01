@@ -54,12 +54,19 @@ static int	delete_char(int *cursor, char *line)
 	return (0);
 }
 
-/*
-** 'C-f' and 'C-b' seem to increase the limit of cursor
-*/
+static void	move_cursor(int *cursor, char *line, int dst)
+{
+	while (*cursor != dst)
+	{
+		if (*cursor > dst)
+			cursor_left(cursor);
+		if (*cursor < dst)
+			cursor_right(cursor, line);
+	}
+}
+
 void		edit_key(int key, char *line, int *cursor)
 {
-	// ft_dprintf(2, "|DBG: edit_key key(%d) cursor(%d)|\n", key,*cursor);
 	if (key == key_left)
 		cursor_left(cursor);
 	if (key == key_right)
@@ -72,19 +79,11 @@ void		edit_key(int key, char *line, int *cursor)
 			delete_char(cursor, line);
 	}
 	if (key == key_home)
-		while (cursor_left(cursor));
+		move_cursor(cursor, line, 0);
 	if (key == key_end)
-		while (cursor_right(cursor, line));
+		move_cursor(cursor, line, ft_strlen(line));
 	if (key == key_word_left)
-	{
-		int word = get_prev_word(*cursor, line);
-		while (*cursor != word)
-			cursor_left(cursor);
-	}
+		move_cursor(cursor, line, get_prev_word(*cursor, line));
 	if (key == key_word_right)
-	{
-		int word = get_next_word(*cursor, line);
-		while (*cursor != word)
-			cursor_right(cursor, line);
-	}
+		move_cursor(cursor, line, get_next_word(*cursor, line));
 }
