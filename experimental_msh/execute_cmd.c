@@ -466,5 +466,46 @@ int				execute_command_internal(t_cmd *command, int asynchronous,
 	   in a subshell. */
 	if (command->type == cm_subshell && (command->flags & CMD_NO_FORK))
 		return (execute_in_subshell(command, asynchronous, pipe_in, pipe_out, fds_to_close));
-	// TODO: leaving off at execute_cmd.c:598
+#if defined(COPROCESS_SUPPORT)
+	if (command->type == cm_coproc)
+		return (last_command_exit_value = execute_coproc(command, pipe_in, pipe_out, fds_to_close));
+#endif
+	user_subshell = command->type == cm_subshell || ((command->flags & CMD_WANT_SUBSHELL) != 0);
+#if defined(TIME_BEFORE_SUBSHELL)
+	if ((command->flags & CMD_TIME_PIPELINE) && user_subshell && asynchronous == 0)
+	{
+		command->flags |= CMD_FORCE_SUBSHELL;
+		exec_result = time_command(command, asynchronous, pipe_in, pipe_out, fds_to_close);
+		currently_executing_command = (t_cmd*)NULL;
+		return (exec_result);
+	}
+#endif
+	if (command->type == cm_subshell ||
+		(command->flags & (CMD_WANT_SUBSHELL | CMD_FORCE_SUBSHELL)) ||
+		(shell_control_structure(command->type) &&
+		 (pipe_out != NO_PIPE || pipe_in != NO_PIPE || asynchronous)))
+	{
+		pid_t paren_pid;
+		int s;
+		char *p;
+
+		/* Fork a subshell, turn off the subshell bit, turn off job
+		   control and call execute_command() on the command again. */
+		if (command->type == cm_subshell)
+			line_number_for_err_trap = line_number = command->value.subshell->line; /* XXX - save value? */
+		/* Otherwise we defer setting line_number */
+		tcmd = make_command_string(command);
+		paren_pid = make_child(p = SAVSTR(tcmd), asynchronous);
+		if (user_subshell && signal_is_trapped(ERROR_TRAP) &&
+			signal_in_progress(DEBUG_TRAP) == 0 && running_trap == 0)
+		{
+			free(the_printed_command_except_trap);
+			the_printed_command_except_trap = SAVSTR(the_printed_command);
+		}
+		if (paren_pid == 0)
+		{
+# if defined(JOB_CONTROL)
+		}
+	}
+	// TODO: leaving off at execute_cmd.c:561
 }

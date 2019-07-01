@@ -42,22 +42,26 @@ EDIT_LINE =	command_line.c \
 			copy_paste.c \
 			command_history.c
 
+STRVECLIB =	strvec_one.c \
+			strvec_two.c \
+			strvec_conv.c \
+			strlist_one.c \
+			strlist_two.c \
+			strlist_three.c
+
+LINKEDLST =	generic_list.c \
+			word_list_init.c
+
 FILES =	$(addprefix builtins/, $(BUILTINS)) \
 		$(addprefix shell_stuff/, $(SH_STUFF)) \
 		$(addprefix edit_line/, $(EDIT_LINE)) \
+		$(addprefix string_vectors/, $(STRVECLIB)) \
+		$(addprefix linked_lists/, $(LINKEDLST)) \
 		main.c \
 		shenv.c \
 		errors.c \
 		signals.c \
-		singletons.c \
-		strvec_one.c \
-		strvec_two.c \
-		strvec_conv.c \
-		generic_list.c \
-		strlist_one.c \
-		strlist_two.c \
-		strlist_three.c \
-		word_list_init.c
+		singletons.c
 
 SRC =	$(addprefix src/, $(FILES))
 
