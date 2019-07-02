@@ -11,8 +11,8 @@
 /* ************************************************************************** */
 
 #include "libft.h"
-#include "msh_variables.h"
-#include "msh_array.h"
+#include "variables.h"
+#include "array.h"
 
 extern char	**g_environ;
 extern time_t	g_shell_start_time;

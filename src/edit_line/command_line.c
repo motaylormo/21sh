@@ -24,12 +24,12 @@ static const t_key	g_edit_keys[] = {
 	{"\e[D", key_left},
 	{"\x02", key_left},
 	{"\x7f", key_backspace},
-	{"\e[3~", key_delete},//	delete
-	{"\x04", key_delete},//		ctrl-d (d = delete)
-	{"\e[H", key_home},//	home
-	{"\x01", key_home},//	ctrl-a (a = ???)
-	{"\e[F", key_end},//	end
-	{"\x05", key_end},//	ctrl-e (e = end)
+	{"\e[3~", key_delete},//		delete
+	{"\x04", key_delete},//			ctrl-d (d = delete)
+	{"\e[H", key_home},//			home
+	{"\x01", key_home},//			ctrl-a (a = start)
+	{"\e[F", key_end},//			end
+	{"\x05", key_end},//			ctrl-e (e = end)
 	{"\e[1;5D", key_word_left},//	ctrl-left
 	{"\eb", key_word_left},//		option-b (b = backwards)
 	{"\e[1;5C", key_word_right},//	ctrl-right
@@ -38,9 +38,9 @@ static const t_key	g_edit_keys[] = {
 };
 
 static const t_key	g_copypaste_keys[] = {
-	{"\x0b", key_cut_to_end},//	ctrl-k (k = kill aka cut)
-	{"\x17", key_cut_word},//	ctrl-w (w = word)
-	{"\x19", key_paste},//		ctrl-y (y = ???)
+	{"\x0b", key_cut_to_end},//		ctrl-k (k = kill aka cut)
+	{"\x17", key_cut_word},//		ctrl-w (w = word)
+	{"\x19", key_paste},//			ctrl-y (y = yank)
 	{(NULL), 0}
 };
 
@@ -99,7 +99,7 @@ void	get_command_line(int fd, char *line)
 	{
 		ft_bzero(buf, sizeof(buf)/sizeof(*buf));
 		ret = read(fd, buf, BUFF_SIZE);
-		// ft_dprintf(2, "|DBG: key.buf(%s)|\n", key.buf);
+		// ft_dprintf(2, "|DBG: buf(%s) cursor(%d)|\n", buf, cursor);
 		if (ft_strequ(buf, "\n"))
 			break ;
 		else if (cursor == 0 && ft_strequ(buf, "\x04"))

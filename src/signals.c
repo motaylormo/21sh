@@ -14,10 +14,13 @@
 
 static void	sigint_handler(int sig)
 {
-	(void)sig;
-	ft_printf("\n");
-	ft_bzero(shenv_singleton(NULL)->cl, LINE_MAX);
-	print_prompt();
+	ft_dprintf(2, "|DBG: sigint_handler sig(%d)|\n", sig);
+	if (sig == SIGINT)
+	{
+		ft_printf("\n");
+		ft_bzero(shenv_singleton(NULL)->cl, LINE_MAX);
+		print_prompt();
+	}
 }
 
 void		signal_catcher(void)

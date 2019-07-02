@@ -44,6 +44,7 @@ extern int errno;
 #if defined(HAVE_MBSTR_H) && defined(HAVE_MBSCHR)
 # include <mbstr.h>
 #endif
+typedef int t_function();
 
 extern int command_string_index;
 extern char *the_printed_command;
@@ -436,7 +437,7 @@ static void		async_redirect_stdin(void)
    return values. Executing a command with nothing in it returns
    EXECUTION_SUCCESS. */
 int				execute_command_internal(t_cmd *command, int asynchronous,
-										 int pipe_in, int pipe_out, struct fd_bitmap *fds_to_close)
+										int pipe_in, int pipe_out, struct fd_bitmap *fds_to_close)
 {
 	int exec_result, user_subshell, invert, ignore_return, was_error_trap;
 	t_redir *my_undo_list, *exec_undo_list;
@@ -483,7 +484,7 @@ int				execute_command_internal(t_cmd *command, int asynchronous,
 	if (command->type == cm_subshell ||
 		(command->flags & (CMD_WANT_SUBSHELL | CMD_FORCE_SUBSHELL)) ||
 		(shell_control_structure(command->type) &&
-		 (pipe_out != NO_PIPE || pipe_in != NO_PIPE || asynchronous)))
+		(pipe_out != NO_PIPE || pipe_in != NO_PIPE || asynchronous)))
 	{
 		pid_t paren_pid;
 		int s;
@@ -504,8 +505,168 @@ int				execute_command_internal(t_cmd *command, int asynchronous,
 		}
 		if (paren_pid == 0)
 		{
-# if defined(JOB_CONTROL)
+#if defined(JOB_CONTROL)
+			free(p); /* Child doesn't use pointer */
+#endif
+			/* We want to run the exit trap for forced {} subshells, and we
+			   want to note this before execute_in_subshell modifies the
+			   t_cmd struct. Need to keep in mind that execute_in_subshell
+			   runs the exit trap for () subshells itself. */
+			/* This handles { command; } & */
+			s = user_subshel == 0 && command->type == cm_group &&
+				pipe_in == NO_PIPE && pipe_out == NO_PIPE && asynchronous;
+			/* run exit trap for : | { ...; } and { ...; } | : */
+			/* run exit trap for : | ( ...; ) and ( ...; ) | : */
+			s+= user_subshell == 0 && command->type == cm_group &&
+				(pipe_in != NO_PIPE || pipe_out != NO_PIPE) && asynchronous == 0;
+			last_command_exit_value = execute_in_subshell(command, asynchronous, pipe_in, pipe_out, fds_to_close);
+			if (s)
+				subshell_exit(last_command_exit_value);
+			else
+				sh_exit(last_command_exit_value);
+			/* NOTREACHED */
+		}
+		else
+		{
+				close_pipes(pipe_in, pipe_out);
+	#if defined(PROCESS_SUBSTITUTION) && defined(HAVE_DEV_FD)
+			if (variable_context == 0) /* wait until shell function completes */
+				unlink_fifo_list();
+	#endif
+			/* If we are part of a pipeline, and not the end of the pipeline,
+			then we should simply return and let the last command in the
+			pipe be waited for.  If we are not in a pipeline, or are the
+			last command in the pipeline, then we wait for the subshell
+			and return its exit status as usual. */
+			if (pipe_out != NO_PIPE)
+				return (EXECUTION_SUCCESS);
+			stop_pipeline(asynchronous, (COMMAND *)NULL);
+			if (asynchronous == 0)
+			{
+				was_error_trap =
+					signal_is_trapped(ERROR_TRAP) && signal_is_ignored(ERROR_TRAP) == 0;
+				invert = (command->flags & CMD_INVERT_RETURN) != 0;
+				ignore_return = (command->flags & CMD_IGNORE_RETURN) != 0;
+				exec_result = wait_for(paren_pid);
+				/* If we have to, invert the return value. */
+				if (invert)
+					exec_result =
+						((exec_result == EXECUTION_SUCCESS) ? EXECUTION_FAILURE
+						: EXECUTION_SUCCESS);
+				last_command_exit_value = exec_result;
+				if (user_subshell && was_error_trap && ignore_return == 0 &&
+					invert == 0 && exec_result != EXECUTION_SUCCESS)
+				{
+					save_line_number = line_number;
+					line_number = line_number_for_err_trap;
+					run_error_trap();
+					line_number = save_line_number;
+				}
+				if (user_subshell && ignore_return == 0 && invert == 0 &&
+					exit_immediately_on_error && exec_result != EXECUTION_SUCCESS)
+				{
+					run_pending_traps();
+					jump_to_top_level(ERREXIT);
+				}
+				return (last_command_exit_value);
+			}
+			else
+			{
+				DESCRIBE_PID(paren_pid);
+				run_pending_traps();
+				/* Posix 2013 2.9.3.1: "the exit status of an asynchronous list
+				shall be zero." */
+				last_command_exit_value = 0;
+				return (EXECUTION_SUCCESS);
+			}
 		}
 	}
-	// TODO: leaving off at execute_cmd.c:561
+#if defined(COMMAND_TIMING)
+	if (command->flags & CMD_TIME_PIPELINE)
+	{
+		if (asynchronous)
+		{
+			command->flags |= CMD_FORCE_SUBSHELL;
+			exec_result = execute_command_internal(command, 1, pipe_in,
+				pipe_out, fds_to_close);
+		}
+		else
+		{
+			exec_result = time_command(command, asynchronous, pipe_in,
+				pipe_out, fds_to_close);
+			currently_executing_command = (t_cmd*)NULL;
+		}
+		return (exec_result);
+	}
+#endif
+	if (shell_control_structure(command->type) && command->redirects)
+	stdin_redir = stdin_redirects(command->redirects);
+#if defined(PROCESS_SUBSTITUTION)
+#if !defined(HAVE_DEV_FD)
+	reap_procsubs();
+#endif
+	if (variable_context != 0) /* XXX - also if sourcelevel != 0? */
+	{
+		ofifo = num_fifos();
+		ofifo_list = copy_fifo_list((int*)&osize);
+		begin_unwind_frame("internal_fifos");
+		add_unwind_protect(xfree, ofifo_list);
+		saved_fifo = 1;
+	}
+	else
+		saved_fifo = 0;
+#endif
+	/* Handle WHILE FOR CASE etc. with redirections. (Also '&' input
+	   redirection.) */
+	if (do_redirections(command->redirects, RX_ACTIVE | RX_UNDOABLE) != 0)
+	{
+		undo_partial_redirects();
+		dispose_exec_redirects();
+#if defined(PROCESS_SUBSTITUTION)
+		if (saved_fifo)
+		{
+			free((void*)ofifo_list);
+			discard_unwind_frame("internal_fifos");
+		}
+#endif
+		return (last_command_exit_value = EXECUTION_FAILURE);
+	}
+	my_undo_list = redirection_undo_list;
+	redirection_undo_list = (t_redir*)NULL;
+	exec_undo_list = exec_redirection_undo_list;
+	exec_redirection_undo_list = (t_redir*)NULL;
+	if (my_undo_list || exec_undo_list)
+		begin_unwind_frame("loop_redirections");
+	if (my_undo_list)
+		add_unwind_protect((t_function*)cleanup_redirects, my_undo_list);
+	if (exec_undo_list)
+		add_unwind_protect((t_function*)dispose_redirects, exec_undo_list);
+	ignore_return = (command->flags & CMD_IGNORE_RETURN) != 0;
+	QUIT;
+	switch (command->type)
+	{
+		case cm_simple:
+		{
+			save_line_number = line_number;
+			/* We can't rely on variables retaining their values across a
+			** call to execute_simple_command if a longjmp occurs as the
+			** result of a `return' builtin. This is true for sure with gcc. */
+#if defined(RECYCLES_PIDS)
+			last_made_pid = NO_PID;
+#endif
+			was_error_trap = signal_is_trapped(ERROR_TRAP) && signal_is_ignored(ERROR_TRAP) == 0;
+			if (ignore_return && command->value.csimple)
+				command->value.csimple->flags |= CMD_IGNORE_RETURN;
+			if (command->flags & CMD_STDIN_REDIR)
+				command->value.csimple->flags |= CMD_STDIN_REDIR;
+			line_number_for_err_trap = line_number = command->value.csimple->line;
+			exec_result = execute_simple_command(command->value.csimple, pipe_in
+				pipe_out, asynchronous, fds_to_close);
+			line_number = save_line_number;
+			/* The temporary environment should be used for only the simple
+			** command immediately following its definition. */
+			dispose_used_env_vars();
+			// TODO: leaving off at execute_cmd.c:811-1088
+		}
+	}
 }
