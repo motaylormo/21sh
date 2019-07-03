@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "sh21.h"
+#include "cl_edit.h"
 
 /*
 **	"le"	cursor left one character

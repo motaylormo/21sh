@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "sh21.h"
+#include "cl_edit.h"
 
 static void	clear_line(char *line, int *cursor)
 {

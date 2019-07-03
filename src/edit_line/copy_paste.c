@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "sh21.h"
+#include "cl_edit.h"
 
 static int	seg_to_copybuf(char *buf, char *str, int start, int end)
 {
@@ -25,19 +26,19 @@ void		copypaste(int key, char *line, int *cursor)
 	static int	flag = 0;
 	int			i;
 
-	if (key == key_cut_to_end || key == key_cut_word)
-		flag = 1;
 	if (key == key_cut_to_end)
 	{
 		i = seg_to_copybuf(buf, line, *cursor, ft_strlen(line));
 		while (i--)
 			edit_key(key_delete, line, cursor);
+		flag = 1;
 	}
 	if (key == key_cut_word)
 	{
 		i = seg_to_copybuf(buf, line, get_prev_word(*cursor, line), *cursor);
 		while (i--)
 			edit_key(key_backspace, line, cursor);
+		flag = 1;
 	}
 	if (key == key_paste && flag == 1)
 		insert_text(buf, ft_strlen(buf), line, cursor);

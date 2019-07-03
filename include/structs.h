@@ -66,13 +66,6 @@ struct	s_str_w_func
 	void	(*f)(char**);
 };
 
-typedef struct s_key	t_key;
-struct	s_key
-{
-	char	*seq;
-	int		enumcode;
-};
-
 /*
 **	For storing command line history
 */

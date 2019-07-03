@@ -44,10 +44,10 @@ SH_STUFF =	executable.c \
 			cl_semicolon.c
 
 EDIT_LINE =	command_line.c \
-			edit_line_util.c \
 			edit_keys.c \
 			copy_paste.c \
-			command_history.c
+			cl_history.c \
+			edit_line_util.c
 
 STRVECLIB =	strvec_one.c \
 			strvec_two.c \
@@ -110,7 +110,7 @@ objfiles: $(SRCDIR)/shell_stuff/prompt.o
 objfiles: $(SRCDIR)/shell_stuff/cl_semicolon.o
 objfiles: $(SRCDIR)/edit_line/edit_keys.o
 objfiles: $(SRCDIR)/edit_line/edit_line_util.o
-objfiles: $(SRCDIR)/edit_line/command_history.o
+objfiles: $(SRCDIR)/edit_line/cl_history.o
 objfiles: $(SRCDIR)/edit_line/command_line.o
 objfiles: $(SRCDIR)/edit_line/copy_paste.o
 
