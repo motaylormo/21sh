@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   handle_quoties.c                                   :+:      :+:    :+:   */
+/*   handle_quotes.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mtaylor <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,7 +12,7 @@
 
 #include "sh21.h"
 
-#define QUOTIES(c)	((c == '"') || (c == '\''))
+#define QUOTES(c)	((c == '"') || (c == '\''))
 
 /*
 **	command lines seperated by ';'
@@ -25,7 +25,7 @@ int			count_cls(char *str)
 	count = (str) ? 1 : 0;
 	while (*str)
 	{
-		if (QUOTIES(*str) && ft_strchr(str + 1, *str))
+		if (QUOTES(*str) && ft_strchr(str + 1, *str))
 			str = ft_strchr(str + 1, *str) + 1;
 		else if (*str == ';')
 		{

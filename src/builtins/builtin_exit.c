@@ -14,6 +14,7 @@
 
 void	builtin_exit(char **argv)
 {
+	ft_putstr("exit\n");
 	strvec_flush(argv);
 	tcsetattr(g_input_fd, 0, orig_tio_singleton());
 	exit(0);

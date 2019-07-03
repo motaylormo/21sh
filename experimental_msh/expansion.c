@@ -10,10 +10,14 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "sh21.h"
 #include "ft_stdio.h"
 #include <pwd.h>
 #include <sys/types.h>
+
+int			g_exp_dollar = 0;
+int			g_expand_var = 0;
+char		*g_home = 0;
 
 #define PL (ln[0])
 #define RL (ln[1])
@@ -22,6 +26,14 @@
 #define SL (ln[4])
 #define EL (ln[5])
 
+/*
+** PL = pattern string length
+** RL = replacement string length
+** NL = new string length
+** TL = total string length
+** SL = remaining string lenth
+** EL = after replacement string length
+*/
 char		*strsub_rep(char *str, char *pat, char *rep)
 {
 	char	*r;
@@ -72,14 +84,11 @@ char		*msh_dollar(char *ret, char *tmp)
 	char			*r;
 	int				varlen;
 
-	msh_debug_print("msh_dollar: start ret(\"%s\") tmp(\"%s\")", ret, tmp);
 	if (!tmp || !*tmp || (r = NULL))
 		return (ret);
-	msh_debug_print("msh_dollar: ret(\"%s\") tmp(\"%s\")", ret, tmp);
 	varlen = msh_varlen(tmp);
 	var = ft_strndup(tmp, varlen + (!varlen ? 2 : 1));
-	msh_debug_print("msh_dollar: varlen(%d) var(\"%s\")", varlen, var);
-	val = get_string_value(var + (!varlen ? 0 : 1));
+	val = get_string_value(var + (!varlen ? 0 : 1));//find_env()
 	if (val)
 	{
 		r = strsub_rep(ret, var, val);
@@ -88,8 +97,7 @@ char		*msh_dollar(char *ret, char *tmp)
 	else
 		r = ft_strdup(ret);
 	free(var);
-	g_shenv->exp_dollar = 1;
-	msh_debug_print("msh_dollar: end r(\"%s\") ret(\"%s\")", r, ret);
+	g_exp_dollar = 1;
 	return (r);
 }
 
@@ -99,10 +107,9 @@ char		*msh_tilde(char *ret, char *tmp)
 	static char		*home;
 	struct passwd	*entry;
 
-	msh_debug_print("msh_tilde: start ret(\"%s\") tmp(\"%s\")", ret, tmp);
 	if (ft_strnequ(tmp, "~~", 2))
 		return (ft_strdup(ret));
-	r[0] = get_string_value("HOME");
+	r[0] = get_string_value("HOME"); //find_env("HOME")
 	if (r[0] == 0)
 	{
 		if (!home)
@@ -113,9 +120,7 @@ char		*msh_tilde(char *ret, char *tmp)
 		}
 		r[0] = ft_strdup(home);
 	}
-	msh_debug_print("msh_tilde: ret(\"%s\") tmp(\"%s\")", ret, tmp);
 	r[1] = strsub_rep(ret, "~", r[0]);
-	msh_debug_print("msh_tilde: end r[1](\"%s\") ret(\"%s\")", r[1], ret);
 	free(r[0]);
 	return (r[1]);
 }
@@ -130,25 +135,21 @@ char		*msh_expand(char *token)
 	char	*ret;
 	char	*rett;
 
-	msh_debug_print("msh_expand: start token(\"%s\")", token);
 	ret = ft_strdup(token);
 	rett = ret;
 	free(token);
 	if ((tmp = ft_strchr(ret, '~')))
 	{
-		msh_debug_print("msh_expand: found tilde");
 		if (!(rett = msh_tilde(ret, tmp)))
 			msh_panic("Memory allocation error in msh_expand ~");
-		free(g_shenv->home);
+		free(g_home);
 	}
 	else if ((tmp = ft_strchr(ret, '$')))
 	{
-		msh_debug_print("msh_expand: found dollar sign");
 		if (!(rett = msh_dollar(ret, tmp)))
 			msh_panic("Memory allocation error in msh_dollar");
 	}
-	(ft_strequ(ret, rett)) ? g_shenv->expand_var = 0 : 0;
+	(ft_strequ(ret, rett)) ? g_expand_var = 0 : 0;
 	free(ret);
-	msh_debug_print("msh_expand: end rett(\"%s\")", rett);
 	return (rett);
 }

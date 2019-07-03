@@ -14,7 +14,6 @@
 
 static void	sigint_handler(int sig)
 {
-	ft_dprintf(2, "|DBG: sigint_handler sig(%d)|\n", sig);
 	if (sig == SIGINT)
 	{
 		ft_printf("\n");

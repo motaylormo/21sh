@@ -72,7 +72,8 @@ void		run_shell(void)
 	print_prompt();
 	line_ptr = shenv_singleton(NULL)->cl;
 	get_command_line(STDIN_FILENO, line_ptr);
-	ft_dprintf(2, "|DBG: run_shell line(%s)|\n", line_ptr);
+	ft_putchar('\n');
+	// ft_dprintf(2, "|DBG: run_shell line(%s)|\n", line_ptr);
 	cls = count_cls(line_ptr);
 	while (cls--)
 	{

@@ -60,6 +60,9 @@
 
 int g_input_fd;
 int g_output_fd;
+int	g_interactive;
+int	g_last_command_exit_value;
+int	g_last_command_exit_signal;
 
 # define NAME "21sh"
 # define BUFF_SIZE 32

@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include <stdint.h>
 
 static const uint8_t	g_varctbl[256] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -31,7 +31,7 @@ static const uint8_t	g_varctbl[256] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-int			msh_varlen(const char *s)
+int			sh_varlen(const char *s)
 {
 	register int	i;
 	char			*p;

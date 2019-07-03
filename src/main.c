@@ -25,17 +25,18 @@ static void	init_terminal(void)
 	char			*term_ptr;
 	struct termios	newtio;
 
+	g_interactive = isatty(g_input_fd);
 	if (!(term_ptr = getenv("TERM")))
 	{
 		handle_error(error_env_var, "TERM");
 		exit(0);
 	}
 	tcgetattr(g_input_fd, &newtio);
-	newtio.c_lflag &= ~(ICANON | ECHO);
-	newtio.c_cc[VMIN] = 26;//so C-y can be paste
+	newtio.c_lflag &= ~(ICANON | ECHO | IXON);
 	newtio.c_cc[VMIN] = 1;
 	newtio.c_cc[VTIME] = 0;
-	newtio.c_cc[VDSUSP] = 0;//so C-y can be paste
+	// newtio.c_cc[VERASE] = 0x7f; //pls
+	newtio.c_cc[VDSUSP] = 0;// so C-y can be paste
 	tcsetattr(g_input_fd, 0, &newtio);
 	tgetent(NULL, term_ptr);
 #if 0

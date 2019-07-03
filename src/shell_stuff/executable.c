@@ -29,7 +29,7 @@ static char	**queue_to_strvector(void)
 		i++;
 		n = n->next;
 	}
-	envp = ft_memalloc(sizeof(char*) * (i + 1));
+	envp = ft_memalloc((i + 1) * sizeof(*envp));
 	i = 0;
 	n = shenv_singleton(NULL)->envlist->first;
 	while (n)
@@ -55,6 +55,9 @@ static void	sig_handler(int sig)
 	signal(SIGINT, sig_handler);
 }
 
+/*
+** TODO: return exit status of previous command run
+*/
 void		run_executable(char *path, char **argv)
 {
 	pid_t	process_id;
@@ -70,10 +73,9 @@ void		run_executable(char *path, char **argv)
 			handle_error(error_forking, NULL);
 		else if (process_id == 0)
 		{
-			execve(path, argv, envp);
-			exit(0);
+			exit(execve(path, argv, envp));
 		}
-		else if (process_id > 0)
+		else
 		{
 			signal(SIGINT, sig_handler);
 			wait(&process_id);

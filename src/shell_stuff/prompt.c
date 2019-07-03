@@ -17,8 +17,10 @@ static void	pwd_prompt(void)
 	char	pwd[PATH_MAX + 1];
 	char	*home_ptr;
 	int		color;
-	int		start = 0;
+	int		start;
+	int		i;
 
+	start = 0;
 	getcwd(pwd, PATH_MAX);
 	if ((home_ptr = find_env("HOME")) &&
 		ft_strnequ(home_ptr, pwd, ft_strlen(home_ptr)))
@@ -27,7 +29,8 @@ static void	pwd_prompt(void)
 		ft_printf(COLOR_TRIM "~");
 	}
 	color = 0;
-	for (int i = start; pwd[i]; ++i)
+	i = start - 1;
+	while (pwd[++i])
 	{
 		if (pwd[i] == '/')
 		{
