@@ -83,9 +83,3 @@ A line editing feature using the `termcaps` library. Implement at least the foll
 | Double quotes | `"` | preserve whitespace and allow for variable expansion but not tilde expansion
 
 </details>
-
-# Current libft funcs that aren't part of orig libft (aka your lib might have another name for them)
-* ft_strchrindex [init_shenv.c, str_to_argv.c]
-* ft_matrixdel [builtin_exit.c, shell.c]
-* ft_iswhitespace [command_line.c, str_to_argv.c]
-* ft_cpycat_path (checks if there's a `/` at the end, and adds one only if there's not) [shell.c]
