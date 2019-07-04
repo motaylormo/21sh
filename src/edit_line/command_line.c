@@ -15,7 +15,9 @@
 
 static const t_key	g_history_keys[] = {
 	{"\e[A", key_up},//		up arrow key
+	{"\x10", key_up},//			ctrl-p
 	{"\e[B", key_down},//	down arrow key
+	{"\x0e", key_down},//		ctrl-n
 	{(NULL), 0}
 };
 
@@ -24,15 +26,15 @@ static const t_key	g_edit_keys[] = {
 	{"\e[D", key_left},//			left arrow key
 	{"\x7f", key_backspace},//		backspace
 	{"\e[3~", key_delete},//		delete
-	{"\x04", key_delete},//			ctrl-d (d = delete)
+	{"\x04", key_delete},//				ctrl-d (d = delete)
 	{"\e[H", key_home},//			home
-	{"\x01", key_home},//			ctrl-a (a = ???)
+	{"\x01", key_home},//				ctrl-a (a = ???)
 	{"\e[F", key_end},//			end
-	{"\x05", key_end},//			ctrl-e (e = end)
+	{"\x05", key_end},//				ctrl-e (e = end)
 	{"\e[1;5D", key_word_left},//	ctrl-left
-	{"\eb", key_word_left},//		option-b (b = backwards)
+	{"\eb", key_word_left},//			option-b (b = backwards)
 	{"\e[1;5C", key_word_right},//	ctrl-right
-	{"\ef", key_word_right},//		option-f (f = forwards)
+	{"\ef", key_word_right},//			option-f (f = forwards)
 	{(NULL), 0}
 };
 

@@ -37,7 +37,7 @@ struct termios	*orig_tio_singleton(void)
 
 	if (flag == 0)
 	{
-		tcgetattr(g_input_fd, &singleton);
+		tcgetattr(STDIN_FILENO, &singleton);
 		flag = 1;
 	}
 	return (&singleton);
@@ -47,7 +47,7 @@ int		window_width(void)
 {
 	struct winsize	argp;
 
-	ioctl(g_input_fd, TIOCGWINSZ, &argp);
+	ioctl(STDIN_FILENO, TIOCGWINSZ, &argp);
 	return (argp.ws_col);
 }
 
