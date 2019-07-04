@@ -81,6 +81,8 @@ enum	e_errors{
 	error_forking
 };
 
+void	init_terminal(void);
+
 void		handle_error(int errorcode, char *arg);
 void		signal_catcher(void);
 

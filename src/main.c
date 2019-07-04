@@ -17,7 +17,7 @@
 **	Set up termcaps
 */
 
-static void	init_terminal(void)
+void	init_terminal(void)
 {
 	char			*term_ptr;
 	struct termios	newtio;

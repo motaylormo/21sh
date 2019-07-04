@@ -68,6 +68,7 @@ void		run_executable(char *path, char **argv)
 	else
 	{
 		envp = queue_to_strvector();
+		tcsetattr(STDIN_FILENO, 0, orig_tio_singleton());
 		process_id = fork();
 		if (process_id < 0)
 			handle_error(error_forking, NULL);
@@ -80,6 +81,7 @@ void		run_executable(char *path, char **argv)
 			signal(SIGINT, sig_handler);
 			wait(&process_id);
 		}
+		init_terminal();
 		strvec_flush(envp);
 	}
 }
