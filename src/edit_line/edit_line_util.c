@@ -13,10 +13,6 @@
 #include "sh21.h"
 #include "cl_edit.h"
 
-#define PART1(c) (c == '\f' || c == '\t' || c == ' ')
-#define PART2(c) (c == '\n' || c == '\v' || c == '\r')
-#define WHITESPACE(c) (PART1(c) || PART2(c))
-
 /*
 **	"im"	begin insert mode
 **	"ei"	end insert mode
@@ -50,9 +46,9 @@ int		get_prev_word(int cursor, char *line)
 	int word;
 
 	word = cursor;
-	while (word - 1 >= 0 && WHITESPACE(line[word - 1]))
+	while (word - 1 >= 0 && ft_isspace(line[word - 1]))
 		word--;
-	while (word - 1 >= 0 && !WHITESPACE(line[word - 1]))
+	while (word - 1 >= 0 && !ft_isspace(line[word - 1]))
 		word--;
 	return (word);
 }
@@ -62,9 +58,9 @@ int		get_next_word(int cursor, char *line)
 	int word;
 
 	word = cursor;
-	while (line[word] && WHITESPACE(line[word]))
+	while (line[word] && ft_isspace(line[word]))
 		word++;
-	while (line[word] && !WHITESPACE(line[word]))
+	while (line[word] && !ft_isspace(line[word]))
 		word++;
 	return (word);
 }

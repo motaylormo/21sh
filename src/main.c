@@ -12,9 +12,6 @@
 
 #include "sh21.h"
 
-int	g_input_fd = STDIN_FILENO;
-int	g_output_fd = STDOUT_FILENO;
-
 /*
 **	Set up working env
 **	Set up termcaps
@@ -25,19 +22,19 @@ static void	init_terminal(void)
 	char			*term_ptr;
 	struct termios	newtio;
 
-	g_interactive = isatty(g_input_fd);
+	g_interactive = isatty(STDIN_FILENO);
 	if (!(term_ptr = getenv("TERM")))
 	{
 		handle_error(error_env_var, "TERM");
 		exit(0);
 	}
-	tcgetattr(g_input_fd, &newtio);
+	tcgetattr(g_interactive, &newtio);
 	newtio.c_lflag &= ~(ICANON | ECHO | IXON);
 	newtio.c_cc[VMIN] = 1;
 	newtio.c_cc[VTIME] = 0;
 	// newtio.c_cc[VERASE] = 0x7f; //pls
 	newtio.c_cc[VDSUSP] = 0;// so C-y can be paste
-	tcsetattr(g_input_fd, 0, &newtio);
+	tcsetattr(g_interactive, 0, &newtio);
 	tgetent(NULL, term_ptr);
 #if 0
 	ft_printf("VEOF: %d\n", newtio.c_cc[VEOF]);

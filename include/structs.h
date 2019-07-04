@@ -66,6 +66,15 @@ struct	s_str_w_func
 	void	(*f)(char**);
 };
 
+typedef struct s_redir	t_redir;
+struct	s_redir
+{
+	char	*str;
+	int		inout;
+	int		wflag;
+	int		oflag;
+};
+
 /*
 **	For storing command line history
 */

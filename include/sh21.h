@@ -58,8 +58,6 @@
 # include "command.h"
 # include "arrayfunc.h"
 
-int g_input_fd;
-int g_output_fd;
 int	g_interactive;
 int	g_last_command_exit_value;
 int	g_last_command_exit_signal;
@@ -72,6 +70,8 @@ int	g_last_command_exit_signal;
 # define COLOR1 TXT256("75")
 # define COLOR2 TXT256("36")
 # define COLOR_TRIM TXT256("250")
+
+#define QUOTIES(c)	((c == '"') || (c == '\''))
 
 enum	e_errors{
 	error_file,
@@ -120,8 +120,10 @@ void		run_shell(void);
 void		run_executable(char *path, char **argv);
 void		print_prompt(void);
 
-int		count_cls(char *str);
-char	**str_to_argv(char *str);
+void		redirection(char *str);
+
+char	**str_to_argv(char *str, int (*f)(int));
+int		issemicolon(int c);
 
 /*
 **	builtins

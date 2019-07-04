@@ -63,27 +63,40 @@ static void	exec_command(char **argv)
 	handle_error(error_command, argv[0]);
 }
 
+static void exec_cl(char *cl)
+{
+	char	**argv;
+	int	saved_stdout = dup(STDOUT_FILENO);
+	int	saved_stdin = dup(STDIN_FILENO);
+
+	redirection(cl);
+	//	^ This bit should probably be incorperated with other parsing stuff later
+	if ((argv = str_to_argv(cl, ft_isspace)))
+	{
+		exec_command(argv);
+		strvec_flush(argv);
+	}
+	dup2(saved_stdout, STDOUT_FILENO);
+	dup2(saved_stdin, STDIN_FILENO);
+}
+
 void		run_shell(void)
 {
 	char	*line_ptr;
-	char	**argv;
-	char	cls;
+	char	**semicolon_lines;
 
 	print_prompt();
 	line_ptr = shenv_singleton(NULL)->cl;
 	get_command_line(STDIN_FILENO, line_ptr);
 	ft_putchar('\n');
-	// ft_dprintf(2, "|DBG: run_shell line(%s)|\n", line_ptr);
-	cls = count_cls(line_ptr);
-	while (cls--)
+	//ft_dprintf(2, "|DBG: run_shell line(%s)|\n", line_ptr);
+
+	if ((semicolon_lines = str_to_argv(line_ptr, issemicolon)))
 	{
-		if ((argv = str_to_argv(line_ptr)))
+		for (int i = 0; semicolon_lines[i]; ++i)
 		{
-			exec_command(argv);
-			strvec_flush(argv);
+			exec_cl(semicolon_lines[i]);
 		}
-		line_ptr = ft_strchr(line_ptr, '\0') + 1;
-		while (*line_ptr == '\0')
-			line_ptr++;
+		strvec_flush(semicolon_lines);
 	}
 }

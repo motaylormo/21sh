@@ -20,7 +20,7 @@ void	builtin_env(char **argv)
 	n = shenv_singleton(NULL)->envlist->first;
 	while (n)
 	{
-		ft_dprintf(g_output_fd, "%s=%s\n", n->label, n->data);
+		ft_printf("%s=%s\n", n->label, n->data);
 		n = n->next;
 	}
 }

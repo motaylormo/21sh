@@ -12,22 +12,20 @@
 
 #include "sh21.h"
 
-#define QUOTIES(c)	((c == '"') || (c == '\''))
-
 /*
 **	Like ft_strsplit()
-**		but any whitespace, not just spaces
+**		but the delimiter is defined by a function
 **		and handling "quoted args" 'of either kind'
 */
 
-static int	count_args(char *str)
+static int	count_args(char *str, int (*f)(int))
 {
 	int	count;
 
 	count = 0;
 	while (*str)
 	{
-		while (*str && ft_isspace(*str))
+		while (*str && (*f)(*str))
 			str++;
 		if (*str && QUOTIES(*str) && ft_strchr(str + 1, *str))
 		{
@@ -35,9 +33,9 @@ static int	count_args(char *str)
 			if (str++)
 				count++;
 		}
-		else if (*str && !ft_isspace(*str))
+		else if (*str && !(*f)(*str))
 		{
-			while (*str && !ft_isspace(*str))
+			while (*str && !(*f)(*str))
 				str++;
 			count++;
 		}
@@ -45,7 +43,7 @@ static int	count_args(char *str)
 	return (count);
 }
 
-static char	**get_args(char *str, char **argv, int argc)
+static char	**get_args(char *str, char **argv, int argc, int (*f)(int))
 {
 	int	len;
 	int	i;
@@ -53,7 +51,7 @@ static char	**get_args(char *str, char **argv, int argc)
 	i = 0;
 	while ((i < argc) && *str)
 	{
-		while (*str && ft_isspace(*str))
+		while (*str && (*f)(*str))
 			str++;
 		len = 0;
 		if (*str && QUOTIES(*str) && ft_strchr(str + 1, *str))
@@ -62,9 +60,9 @@ static char	**get_args(char *str, char **argv, int argc)
 				argv[i++] = ft_strsub(str, 1, len);
 			str += len + 2;
 		}
-		else if (*str && !ft_isspace(*str))
+		else if (*str && !(*f)(*str))
 		{
-			while (str[len] && !ft_isspace(str[len]))
+			while (str[len] && !(*f)(str[len]))
 				len++;
 			argv[i++] = ft_strsub(str, 0, len);
 			str += len;
@@ -73,17 +71,22 @@ static char	**get_args(char *str, char **argv, int argc)
 	return (argv);
 }
 
-char		**str_to_argv(char *str)
+char		**str_to_argv(char *str, int (*f)(int))
 {
 	int		argc;
 	char	**argv;
 
 	if (str == NULL)
 		return (NULL);
-	if ((argc = count_args(str)) < 1)
+	if ((argc = count_args(str, f)) < 1)
 		return (NULL);
 	if (!(argv = ft_memalloc(sizeof(char*) * (argc + 1))))
 		return (NULL);
-	argv = get_args(str, argv, argc);
+	argv = get_args(str, argv, argc, f);
 	return (argv);
+}
+
+int		issemicolon(int c)
+{
+	return (c == ';');
 }
