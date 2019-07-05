@@ -6,7 +6,7 @@
 /*   By: callen <callen@student.42.us.org>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/27 23:20:35 by callen            #+#    #+#             */
-/*   Updated: 2019/06/30 13:59:49 by callen           ###   ########.fr       */
+/*   Updated: 2019/07/04 06:21:23 by callen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,5 @@ t_strlst	*strlist_prefix_suffix(t_strlst *l, char *p, char *s);
 void		strlist_print(t_strlst *l, char *pr);
 void		strlist_walk(t_strlst *l, t_shstrlstmapfunc *fn);
 void		strlist_sort(t_strlst *l);
-
 
 #endif

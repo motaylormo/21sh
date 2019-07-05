@@ -36,8 +36,6 @@ $(NAME): libobj
 	@$(AR) -cr $@ $(SRCDIR)/*.o
 	$(RANLIB) $@
 
-# @$(CD) $(SRCDIR)
-# @$(CD) -
 .PHONY: libobj
 libobj:
 	@make -C $(SRCDIR) -sj4 -f Src.mk all
@@ -49,8 +47,6 @@ $(DNAME): dlibobj
 	@$(AR) -rcu $@ $(SRCDIR)/*.o
 	$(RANLIB) $@
 
-# @$(CD) $(SRCDIR)
-# @$(CD) -
 .PHONY: dlibobj
 dlibobj:
 	@make -C $(SRCDIR) -sj4 -f Src.mk debug
@@ -62,13 +58,10 @@ $(ANAME): alibobj
 	@$(AR) -rcu $@ $(SRCDIR)/*.o
 	$(RANLIB) $@
 
-# @$(CD) $(SRCDIR)
-# @$(CD) -
 .PHONY: alibobj
 alibobj:
 	@make -C $(SRCDIR) -sj4 -f Src.mk asan
 
-# @$(CD) $(SRCDIR)
 .PHONY: clean
 clean:
 	@make -C $(SRCDIR) -f Src.mk clean
@@ -276,4 +269,3 @@ hash_size.c \
 hash_string.c \
 hash_walk.c \
 dq_deque.c
-

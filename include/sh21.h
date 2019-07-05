@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   21sh.h                                             :+:      :+:    :+:   */
+/*   sh21.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mtaylor <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/10 08:26:30 by mtaylor           #+#    #+#             */
-/*   Updated: 2019/06/10 08:26:31 by mtaylor          ###   ########.fr       */
+/*   Updated: 2019/07/04 06:25:05 by callen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,10 +81,10 @@ enum	e_errors{
 	error_forking
 };
 
-void	init_terminal(void);
+void			init_terminal(void);
 
-void		handle_error(int errorcode, char *arg);
-void		signal_catcher(void);
+void			handle_error(int errorcode, char *arg);
+void			signal_catcher(void);
 
 /*
 **	singletons.c
@@ -98,43 +98,44 @@ void			ft_cpycat_path(char *d, const char *s, const char *b);
 /*
 **	shenv.c
 */
-void		init_shenv(int argc, char **argv, char **envp, char **aplv);
-char		*find_env(char *label);
-int			enqueue_env(t_queue *q, char *str);
+void			init_shenv(int argc, char **argv, char **envp, char **aplv);
+char			*find_env(char *label);
+int				enqueue_env(t_queue *q, char *str);
 
 /*
 **	edit line
 */
-void	get_command_line(int fd, char *line);
-void	edit_key(int key, char *line, int *cursor);
-void	copypaste(int key, char *line, int *cursor);
-void	add_cl_to_history(char *line);
-void	get_command_history(int key, char *line, t_cl_node **curr, int *cursor);
+void			get_command_line(int fd, char *line);
+void			edit_key(int key, char *line, int *cursor);
+void			copypaste(int key, char *line, int *cursor);
+void			add_cl_to_history(char *line);
+void			get_command_history(int key, char *line, t_cl_node **curr,
+		int *cursor);
 
-void	insert_text(char *buf, int len, char *line, int *cursor);
-int		get_prev_word(int cursor, char *line);
-int		get_next_word(int cursor, char *line);
+void			insert_text(char *buf, int len, char *line, int *cursor);
+int				get_prev_word(int cursor, char *line);
+int				get_next_word(int cursor, char *line);
 
 /*
 **	shell_stuff
 */
-void		run_shell(void);
-void		run_executable(char *path, char **argv);
-void		print_prompt(void);
+void			run_shell(void);
+void			run_executable(char *path, char **argv);
+void			print_prompt(void);
 
-void		redirection(char *str);
+void			redirection(char *str);
 
-char	**str_to_argv(char *str, int (*f)(int));
-int		issemicolon(int c);
+char			**str_to_argv(char *str, int (*f)(int));
+int				issemicolon(int c);
 
 /*
 **	builtins
 */
-void	builtin_cd(char **argv);
-void	builtin_echo(char **argv);
-void	builtin_env(char **argv);
-void	builtin_exit(char **argv);
-void	builtin_setenv(char **argv);
-void	builtin_unsetenv(char **argv);
+void			builtin_cd(char **argv);
+void			builtin_echo(char **argv);
+void			builtin_env(char **argv);
+void			builtin_exit(char **argv);
+void			builtin_setenv(char **argv);
+void			builtin_unsetenv(char **argv);
 
 #endif

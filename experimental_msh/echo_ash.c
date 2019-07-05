@@ -1,3 +1,5 @@
+#include <unistd.h>
+
 static int	echo_escapes(char **p, char *c)
 {
 	int		count;
@@ -43,7 +45,6 @@ int			echo_builtin_ash(int argc, char **argv)
 	int		nflag;
 	int		eflag;
 
-	msh_debug_print("echo_builtin_ash: start");
 	nflag = 0;
 	eflag = 0;
 	ap = argv;
@@ -76,5 +77,4 @@ int			echo_builtin_ash(int argc, char **argv)
 	if (!nflag)
 		ft_putchar('\n');
 	return (0);
-	msh_debug_print("echo_builtin_ash: end");
 }

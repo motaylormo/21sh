@@ -348,20 +348,20 @@ typedef struct	s_element
 
 typedef union	u_cmd_val
 {
-		struct t_for_com		*cfor;
-		struct t_case_com		*ccase;
-		struct t_while_com		*cwhile;
-		struct t_if_com			*cif;
-		struct t_connection		*cconnection;
-		struct t_simple_com		*csimple;
-		struct t_function_def	*cfunction_def;
-		struct t_group_com		*cgroup;
-		struct t_select_com		*cselect;
-		struct t_arith_com		*carith;
-		struct t_cond_com		*ccond;
-		struct t_arith_for_com	*carithfor;
-		struct t_subshell_com	*csubshell;
-		struct t_coproc_com		*ccoproc;
+	struct t_for_com		*cfor;
+	struct t_case_com		*ccase;
+	struct t_while_com		*cwhile;
+	struct t_if_com			*cif;
+	struct t_connection		*cconnection;
+	struct t_simple_com		*csimple;
+	struct t_function_def	*cfunction_def;
+	struct t_group_com		*cgroup;
+	struct t_select_com		*cselect;
+	struct t_arith_com		*carith;
+	struct t_cond_com		*ccond;
+	struct t_arith_for_com	*carithfor;
+	struct t_subshell_com	*csubshell;
+	struct t_coproc_com		*ccoproc;
 }				t_cmd_val;
 
 /*
