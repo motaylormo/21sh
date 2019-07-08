@@ -1,5 +1,32 @@
 #include "command.h"
 #include "libft.h"
+
+/*
+** parser.c --- TODO Notes 21sh
+** needs to take a line of input such as:
+** $ mkdir test ; cd test ; ls -a ; ls | cat | wc -c > output ; cat output
+** .	..
+**        5
+** $
+** parse into `struct s_element'
+struct	s_element {
+	t_wdtk	*word;
+	t_redir	*redirect;
+}
+** translate to struct s_command
+struct	s_command {
+	enum e_cmdtype	type;
+	int				flags;
+	int				line;
+	t_redir			*redirects;
+	t_cmd_val		value;
+}
+{.word="mkdir" .args={"test"} .type=cm_simple .rhs={
+ .word="cd" .args={"test"} .type=cm_simple .rhs={
+ .word="ls" .args={"-a"} .type=cm_simple .rhs={
+ .word=NULL .flags=}}}}}}
+*/
+
 typedef struct s_token t_token;
 struct s_token
 {
@@ -22,6 +49,7 @@ enum e_node_type
 	NODE_GREATER_BAR,
 	NODE_BAR_AND,
 	NODE_COMMAND,
+	NODE_CMDARG,
 };
 t_token g_simple[] = {
 	{"|", NODE_PIPE},
@@ -54,6 +82,12 @@ struct	s_ast
 {
 	t_ast_ntype	type;
 	union u_val	node;
+};
+struct	s_abs_syn_tree
+{
+	t_ast_ntype				type;
+	struct s_abs_syn_tree	*lhs;
+	struct s_abs_syn_tree	*rhs;
 };
 static t_ast *parse_binop(char **toks, enum e_node_type ty)
 {
@@ -130,9 +164,54 @@ static int is_esc(int c)
 	}
 	return (0);
 }
+char *ft_strsep(char **str, const char *sep)
+{
+	char *start;
+	char *end;
 
+	start = *str;
+	if (!start)
+		return (NULL);
+	end = start + ft_strcspn(start, sep);
+	if (*end)
+		*end++ = '\0';
+	else
+		end = NULL;
+	*str = end;
+	return (start);
+}
+int tokenize(const char *token)
+{
+	size_t i;
+
+	if (!token)
+		return (-1);
+	i = 0;
+	while (i < NODE_COMMAND)
+	{
+		if (ft_strequ(g_simple[i].word, token))
+			return (g_simple[i].token);
+		i++;
+	}
+	return (NODE_COMMAND);
+}
+void insert_node(char *word, int tok)
+{
+}
 char **read_tokens(char *line)
 {
+	char	*s;
+	char	*tok;
+	char	*tofree;
+	int		tk;
+
+	s = strdup(line);
+	tofree = s;
+	while ((tok = strsep(&s, " \n\t")) != NULL)
+	{
+		tk = tokenize(tok);
+		push_token(tk);
+	}
 	return (&line);
 }
 t_ast *parse(char *line, int *bg)

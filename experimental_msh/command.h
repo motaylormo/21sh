@@ -50,7 +50,7 @@ enum		r_instruction {
 ** Redirection flags; values for rflags
 */
 
-# define REDIR_VARASSIGN		0x01
+# define REDIR_VARASSIGN    0x01
 
 /*
 ** Redirection errors.
@@ -64,7 +64,7 @@ enum		r_instruction {
 # define NOCLOBBER_REDIRECT  -2
 # define RESTRICTED_REDIRECT -3
 # define HEREDOC_REDIRECT    -4
-# define BADVAR_REDIRECT	    -5
+# define BADVAR_REDIRECT     -5
 
 # define CLOBBERING_REDIRECT(i) (i == r_output_direction || i == r_err_and_out)
 
@@ -238,23 +238,21 @@ enum		e_cmdtype {
 ** flags - Flags associated with this word.
 */
 
-typedef struct s_wdtk	t_wdtk;
-struct	s_wdtk
+typedef struct	s_wdtk
 {
 	char	*word;
 	int		flags;
-};
+}				t_wdtk;
 
 /*
 ** struct s_wlst : A linked list of words
 */
 
-typedef struct s_wlst	t_wlst;
-struct	s_wlst
+typedef struct	s_wlst
 {
 	t_wlst	*next;
 	t_wdtk	*word;
-};
+}				t_wlst;
 
 /*
 ** -- Shell Command Structs -- TODO
@@ -266,7 +264,7 @@ struct	s_wlst
 ** use the file in FILENAME.  Out-of-range descriptors are identified by a
 ** negative DEST. (REDIRECTEE)
 **
-** dest - Place to redirect t_redir to, or ...
+** dest     - Place to redirect t_redir to, or ...
 ** filename - filename to redirect to.
 */
 
@@ -277,16 +275,16 @@ typedef union	u_redir_target
 }				t_rdtgt;
 
 /*
-** Structure describing a redirection.  If t_redir is negative, the parser
+** Structure describing a redirection. If REDIRECTOR is negative, the parser
 ** (or translator in redir.c) encountered an out-of-range file descriptor.
 ** (REDIRECT)
 **
-** next - Next element, or NULL.
-** redirector - Descriptor or varname to be redirected.
-** rflags - Private flags for this redirection
-** flags - Flag value for 'open'.
-** ins - What to do with the information.
-** redirectee - File descriptor or filename
+** next         - Next element, or NULL.
+** redirector   - Descriptor or varname to be redirected.
+** rflags       - Private flags for this redirection
+** flags        - Flag value for 'open'.
+** ins          - What to do with the information.
+** redirectee   - File descriptor or filename
 ** here_doc_eof - The word that appeared in <<foo.
 */
 
@@ -310,7 +308,7 @@ typedef struct	s_element
 {
 	t_wdtk	*word;
 	t_redir	*redirect;
-}				t_rdelm;
+}				t_elm;
 
 /*
 ** Possible values for command->flags.
@@ -508,7 +506,8 @@ typedef struct	s_select_com
 ** false_case - What to do if the test returned zero.
 */
 
-typedef struct	s_if_com {
+typedef struct	s_if_com
+{
 	int		flags;
 	t_cmd	*test;
 	t_cmd	*true_case;

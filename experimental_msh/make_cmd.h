@@ -27,7 +27,7 @@ extern t_cmd *make_if_command(t_cmd *cmd1, t_cmd *cmd2, t_cmd *cmd3);
 extern t_cmd *make_while_command(t_cmd *cmd1, t_cmd *cmd2);
 extern t_cmd *make_until_command(t_cmd *cmd1, t_cmd *cmd2);
 extern t_cmd *make_bare_simple_command(void);
-extern t_cmd *make_simple_command(t_rdelm elm, t_cmd *cmd);
+extern t_cmd *make_simple_command(t_elm elm, t_cmd *cmd);
 extern void make_here_document(t_redir *redir, int flags);
 extern t_redir *make_redirection(t_rdtgt rd, enum r_instruction ri, t_rdtgt sd, int flags);
 extern t_cmd *make_function_def(t_wdtk *wd, t_cmd *cmd, int fl1, int fl2);
