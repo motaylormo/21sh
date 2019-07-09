@@ -3,6 +3,7 @@
 
 /*
 ** parser.c --- TODO Notes 21sh
+** Don't worry about multiline input yet
 ** needs to take a line of input such as:
 ** $ mkdir test ; cd test ; ls -a ; ls | cat | wc -c > output ; cat output
 ** .	..
@@ -24,7 +25,17 @@ struct	s_command {
 {.word="mkdir" .args={"test"} .type=cm_simple .rhs={
  .word="cd" .args={"test"} .type=cm_simple .rhs={
  .word="ls" .args={"-a"} .type=cm_simple .rhs={
- .word=NULL .flags=}}}}}}
+ .word=NULL .args=NULL .type=cm_connection .}}}}}}
+
+----------
+linked list of commands with arguments
+typedef struct s_cmd {
+	struct s_cmd *next;
+	int type;
+	WORD_TOKEN *command;
+	WORD_TOKEN **arguments;
+	redirections?
+}
 */
 
 typedef struct s_token t_token;
