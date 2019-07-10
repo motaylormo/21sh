@@ -38,20 +38,52 @@ typedef struct s_cmd {
 }
 */
 
+/* make_cmd.c */
+t_wdtk		*make_bare_word(const char *s)
+{
+	t_wdtk *w;
+
+	w = malloc(sizeof(*w));
+	w->word = s ? STRSAV(s) : STRSAV("");
+	w->flags = 0;
+	return (w);
+}
+
+/* make_cmd.c */
+t_wlst		*make_word_list(t_wdtk *x, t_wlst *l)
+{
+	t_wlst *w;
+
+	w = malloc(sizeof(*w));
+	w->word = x;
+	w->next = l;
+	return (w);
+}
+
+/* Parse input into a WORD_LIST */
 void parse_input(char **argv, char **envp)
 {
-	char *tofree, *tmp, *str;
-	size_t token_length;
+	char *tofree=0, *tmp=0, *str=0;
+	t_wlst *inpt;
+	size_t token_length=0, idx=0, total=0;
 
 	(void)envp;
-	str = strdup(*argv);
+	tofree = str = strdup(*argv);
 	if (str == NULL)
 		return ;
-	/* is it an invalid starting word */
-	token_length = strcspn(str, "");
-	/* read word */
-	/* classify word */
-	/* if command, check for arguments */
+	total = strlen(str);
+	while (idx + token_length < total) {
+		/* is it an invalid starting word */
+		token_length = strcspn(str, "\'\" \t\n;\\");
+		fprintf(stderr, "DEBUG: token_length(%zd)\n", token_length);
+		/* read word */
+		tmp = strndup(str+idx, token_length);
+		/* classify word */
+		fprintf(stderr, "DEBUG: tmp(%s)\n", tmp);
+		/* if command, check for arguments and */
+		/* if redirection, ensure it is valid: [n] */
+		inpt = make_word_list(make_bare_word(tmp), inpt);
+	}
 }
 
 int main(int argc, char *argv[], char *envp[]) {
