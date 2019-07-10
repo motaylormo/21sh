@@ -38,6 +38,29 @@ typedef struct s_cmd {
 }
 */
 
+void parse_input(char **argv, char **envp)
+{
+	char *tofree, *tmp, *str;
+	size_t token_length;
+
+	(void)envp;
+	str = strdup(*argv);
+	if (str == NULL)
+		return ;
+	/* is it an invalid starting word */
+	token_length = strcspn(str, "");
+	/* read word */
+	/* classify word */
+	/* if command, check for arguments */
+}
+
+int main(int argc, char *argv[], char *envp[]) {
+	if (argc >= 2) {
+		parse_input(argv+1, envp);
+	} else {
+		fprintf(stderr, "%s: not enough arguments for parsing tester\n", *argv);
+	}
+}
 typedef struct s_token t_token;
 struct s_token
 {
