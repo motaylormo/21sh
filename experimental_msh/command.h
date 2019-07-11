@@ -6,7 +6,7 @@
 /*   By: callen <callen@student.42.us.org>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/16 19:07:27 by callen            #+#    #+#             */
-/*   Updated: 2019/05/28 20:17:58 by callen           ###   ########.fr       */
+/*   Updated: 2019/07/10 16:22:54 by callen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,7 +238,7 @@ enum		e_cmdtype {
 ** flags - Flags associated with this word.
 */
 
-typedef struct	s_wdtk
+typedef struct	s_word_token
 {
 	char	*word;
 	int		flags;
@@ -248,10 +248,10 @@ typedef struct	s_wdtk
 ** struct s_wlst : A linked list of words
 */
 
-typedef struct	s_wlst
+typedef struct	s_word_list
 {
-	t_wlst	*next;
-	t_wdtk	*word;
+	struct s_word_list	*next;
+	struct s_word_token	*word;
 }				t_wlst;
 
 /*

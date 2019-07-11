@@ -1,5 +1,13 @@
 #include "command.h"
-#include "libft.h"
+
+#include <inttypes.h>
+#include <stdlib.h>
+#include <string.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <errno.h>
+
+/* #include "libft.h" */
 
 /*
 ** parser.c --- TODO Notes 21sh
@@ -22,10 +30,10 @@ struct	s_command {
 	t_redir			*redirects;
 	t_cmd_val		value;
 }
-{.word="mkdir" .args={"test"} .type=cm_simple .rhs={
- .word="cd" .args={"test"} .type=cm_simple .rhs={
- .word="ls" .args={"-a"} .type=cm_simple .rhs={
- .word=NULL .args=NULL .type=cm_connection .}}}}}}
+{	.word="mkdir" .args={"test"} .type=cm_simple .rhs={
+	.word="cd" .args={"test"} .type=cm_simple .rhs={
+	.word="ls" .args={"-a"} .type=cm_simple .rhs={
+	.word=NULL .args=NULL .type=cm_connection .}}}}}}
 
 ----------
 linked list of commands with arguments
@@ -37,6 +45,58 @@ typedef struct s_cmd {
 	redirections?
 }
 */
+
+# define REVLIST(l,t) ((l && l->next) ? (t)list_reverse((t_glist*)l) : (t)(l))
+# define STRSAV(x) strcpy(malloc(1 + strlen(x)), (x))
+# define STRDUP(x) ((x) ? strcpy(malloc(1+strlen(x)), (x)) : (char*)NULL)
+
+typedef struct s_glist	t_glist;
+struct		s_glist
+{
+	struct s_glist	*next;
+};
+
+int			list_length(t_glist *lst)
+{
+	register int i;
+
+	i = 0;
+	while (lst)
+	{
+		lst = lst->next;
+		i++;
+	}
+	return (i);
+}
+
+t_glist		*list_reverse(t_glist *list)
+{
+	register t_glist *n;
+	register t_glist *p;
+
+	p = 0;
+	while (list)
+	{
+		n = list->next;
+		list->next = p;
+		p = list;
+		list = n;
+	}
+	return (p);
+}
+
+t_glist		*list_append(t_glist *head, t_glist *tail)
+{
+	register t_glist	*t_head;
+
+	if (head == 0)
+		return (tail);
+	t_head = head;
+	while (t_head->next)
+		t_head = t_head->next;
+	t_head->next = tail;
+	return (head);
+}
 
 /* make_cmd.c */
 t_wdtk		*make_bare_word(const char *s)
@@ -60,520 +120,248 @@ t_wlst		*make_word_list(t_wdtk *x, t_wlst *l)
 	return (w);
 }
 
+/* make_cmd.c */
+t_wdtk		*make_word_flags(t_wdtk *w, const char *string)
+{
+	register int	i;
+	int				slen;
+
+	i = 0;
+	slen = strlen(string);
+	while (i < slen)
+	{
+		if (string[i] == '$')
+			w->flags |= W_HASDOLLAR;
+		if (string[i] == '\\' && i++)
+			continue;
+		if (string[i] == '\'' || string[i] == '`' || string[i] == '"')
+			w->flags |= W_QUOTED;
+		i++;
+	}
+	return (w);
+}
+
+/* make_cmd.c */
+t_wdtk		*make_word(const char *string)
+{
+	t_wdtk	*temp;
+
+	temp = make_bare_word(string);
+	return (make_word_flags(temp, string));
+}
+
+/* dispose_cmd.c */
+void		dispose_word(t_wdtk *w)
+{
+	if (w == NULL)
+		return ;
+	free(w->word);
+	free(w);
+}
+
+#define WHITESPACE(c) ((c) == ' ' || (c) == '\t')
+#define DIGIT(c) ((c) >= '0' && (c) <= '9')
+/* general.c */
+int			legal_number(const char *str, intmax_t *res)
+{
+	intmax_t	val;
+	char		*ep;
+
+	if (res)
+		*res = 0;
+	if (str == NULL)
+		return (0);
+	errno = 0;
+	val = strtoimax(str, &ep, 10);
+	if (errno || ep == str)
+		return (0); /* errno is set on overflow or underflow */
+
+	/* Skip any trailing whitespace, since strtoimax does not. */
+	while (WHITESPACE(*ep))
+		ep++;
+
+	/* If *str is not '\0' but *ep is '\0' on return, the entire string
+	is valid. */
+	if (*str && *ep == '\0')
+	{
+		if (res)
+			*res = val;
+		/* If it spill, don't do the fill. */
+		return (1);
+	}
+	return (0);
+}
+
+/* general.c */
+int			all_digits(const char *str)
+{
+	register const char	*s;
+
+	s = str;
+	while (*s)
+	{
+		if (DIGIT(*s) == 0)
+			return (0);
+		s++;
+	}
+	return (1);
+}
+
+/* make_cmd.c */
+t_redir		*make_redirection(t_rdtgt source, enum r_instruction instruction,
+		t_rdtgt dest_and_filename, int flags)
+{
+	t_redir		*temp;
+	t_wdtk		*w;
+	int			wlen;
+	intmax_t	lfd;
+
+	temp = malloc(sizeof(*temp));
+	if (!temp)
+		return (NULL);
+	temp->redirector = source;
+	temp->redirectee = dest_and_filename;
+	temp->here_doc_eof = 0;
+	temp->ins = instruction;
+	temp->flags = 0;
+	temp->rflags = flags;
+	temp->next = (t_redir*)NULL;
+	switch (instruction) {
+		case r_output_direction:		/* >foo */
+		case r_output_force:			/* >| foo */
+		case r_err_and_out:				/* &>filename */
+			temp->flags = O_TRUNC | O_WRONLY | O_CREAT;
+			break;
+
+		case r_appending_to:			/* >>foo */
+		case r_append_err_and_out:		/* &>> filename */
+			temp->flags = O_APPEND | O_WRONLY | O_CREAT;
+			break;
+
+		case r_input_direction:			/* <foo */
+		case r_inputa_direction:		/* foo & makes this. */
+			temp->flags = O_RDONLY;
+			break;
+
+		case r_input_output:			/* <>foo */
+			temp->flags = O_RDWR | O_CREAT;
+			break;
+
+		case r_deblank_reading_until:	/* <<-foo */
+		case r_reading_until:			/* << foo */
+		case r_reading_string:			/* <<< foo */
+		case r_close_this:				/* <&- */
+		case r_duplicating_input:		/* 1<&2 */
+		case r_duplicating_output:		/* 1>&2 */
+			break;
+
+		/* the parser doesn't pass these. */
+		case r_move_input:				/* 1<&2- */
+		case r_move_output:				/* 1>&2- */
+		case r_move_input_word:			/* 1<&$foo- */
+		case r_move_output_word:		/* 1>&$foo- */
+			break;
+
+		/* The way the lexer works we have to do this here. */
+		case r_duplicating_input_word:	/* 1<&$foo */
+		case r_duplicating_output_word:	/* 1>&$foo */
+			w = dest_and_filename.filename;
+			wlen = strlen(w->word) - 1;
+			if (w->word[wlen] == '-') /* Ack, big gross. */
+			{
+				w->word[wlen] = '\0';
+				if (all_digits(w->word) && legal_number(w->word, &lfd) &&
+						lfd == (int)lfd)
+				{
+					dispose_word(w);
+					temp->ins = (instruction == r_duplicating_input_word)
+						? r_move_input
+						: r_move_output;
+				}
+				else
+					temp->ins = (instruction == r_duplicating_input_word)
+						? r_move_input_word
+						: r_move_output_word;
+			}
+			break;
+		default:
+			fprintf(stderr, "Error make_redirection: redirection instruction `%d' out of range\n", instruction);
+			abort();
+			break;
+	}
+	return (temp);
+}
+
+void		print_word_token(t_wdtk *word)
+{
+	if (word == NULL)
+		return ;
+	printf("{word(%s) flags(%d)}\n", word->word, word->flags);
+}
+
+void		map_word_list(t_wlst *list, void (*func)(t_wdtk *))
+{
+	t_wlst	*w;
+
+	if (list == NULL || func == NULL)
+		return ;
+	w = list;
+	while (w != NULL)
+	{
+		func(w->word);
+		w = w->next;
+	}
+}
+
 /* Parse input into a WORD_LIST */
-void parse_input(char **argv, char **envp)
+void parse_input(char *argv)
 {
 	char *tofree=0, *tmp=0, *str=0;
-	t_wlst *inpt;
+	t_wlst *inpt=0;
 	size_t token_length=0, idx=0, total=0;
+	int inpt_length=0;
 
-	(void)envp;
-	tofree = str = strdup(*argv);
+	tofree = str = strdup(argv);
 	if (str == NULL)
 		return ;
 	total = strlen(str);
-	while (idx + token_length < total) {
+	while (idx+token_length < total)
+	{
 		/* is it an invalid starting word */
-		token_length = strcspn(str, "\'\" \t\n;\\");
-		fprintf(stderr, "DEBUG: token_length(%zd)\n", token_length);
+		token_length = strcspn(str+idx, " \t\n");
+		fprintf(stderr, "DEBUG: token_length(%zd) idx(%zd)\n", token_length, idx);
+		if (token_length == 0)
+			break;
+
 		/* read word */
 		tmp = strndup(str+idx, token_length);
-		/* classify word */
+
+		/* TODO classify word */
 		fprintf(stderr, "DEBUG: tmp(%s)\n", tmp);
+
 		/* if command, check for arguments and */
+
 		/* if redirection, ensure it is valid: [n] */
-		inpt = make_word_list(make_bare_word(tmp), inpt);
+		inpt = make_word_list(make_word(tmp), inpt);
+		/* inpt = make_word_list(make_bare_word(tmp), inpt); */
+		idx += token_length + 1;
+		token_length = 0;
 	}
+	free(tofree);
+	inpt = REVLIST(inpt, t_wlst*);
+	inpt_length = list_length((t_glist*)inpt);
+	fprintf(stderr, "DEBUG: inpt_length(%d)\n", inpt_length);
+	map_word_list(inpt, print_word_token);
 }
 
-int main(int argc, char *argv[], char *envp[]) {
-	if (argc >= 2) {
-		parse_input(argv+1, envp);
-	} else {
-		fprintf(stderr, "%s: not enough arguments for parsing tester\n", *argv);
-	}
-}
-typedef struct s_token t_token;
-struct s_token
+int main(int argc, char *argv[])
 {
-	char	*word;
-	int		token;
-};
-enum e_node_type
-{
-	NODE_PIPE,
-	NODE_AND_AND,
-	NODE_OR_OR,
-	NODE_GREATER,
-	NODE_GREATER_AND,
-	NODE_LESS,
-	NODE_LESS_AND,
-	NODE_GREATER_GREATER,
-	NODE_LESS_LESS,
-	NODE_LESS_LESS_MINUS,
-	NODE_LESS_GREATER,
-	NODE_GREATER_BAR,
-	NODE_BAR_AND,
-	NODE_COMMAND,
-	NODE_CMDARG,
-};
-t_token g_simple[] = {
-	{"|", NODE_PIPE},
-	{"&&", NODE_AND_AND},
-	{"||", NODE_OR_OR},
-	{">", NODE_GREATER},
-	{">&", NODE_GREATER_AND},
-	{"<", NODE_LESS},
-	{"<&", NODE_LESS_AND},
-	{">>", NODE_GREATER_GREATER},
-	{"<<", NODE_LESS_LESS},
-	{"<<-", NODE_LESS_LESS_MINUS},
-	{"<>", NODE_LESS_GREATER},
-	{">|", NODE_GREATER_BAR},
-	{"|&", NODE_BAR_AND},
-};
-typedef struct s_ast	t_ast;
-typedef struct s_astnode	t_astnode;
-struct	s_astnode
-{
-	t_ast	*l;
-	t_ast	*r;
-};
-union	u_val
-{
-	char		**tokens;
-	t_astnode	child;
-};
-struct	s_ast
-{
-	t_ast_ntype	type;
-	union u_val	node;
-};
-struct	s_abs_syn_tree
-{
-	t_ast_ntype				type;
-	struct s_abs_syn_tree	*lhs;
-	struct s_abs_syn_tree	*rhs;
-};
-static t_ast *parse_binop(char **toks, enum e_node_type ty)
-{
-	char **stoks = toks;
-	t_ast *n;
-	t_ast *m;
-
-	if (ty == NODE_COMMAND)
+	if (argc >= 2)
 	{
-		if (!*toks)
-			ft_dprintf(2, "parse_binop: ack badnull toks\n");
-		n = malloc(sizeof(*n));
-		n->type = NODE_COMMAND;
-		n->node.tokens = stoks;
-		return (n);
-	}
-	while (toks[0])
-	{
-		if (ft_strequ(g_simple[ty].word, toks[0]))
-		{
-			toks[0] = NULL;
-			m = malloc(sizeof(*m));
-			m->type = ty;
-			if (!(m->node.child.l = parse_binop(stoks, ty - 1)))
-				return (NULL);
-			if (!(m->node.child.r = parse_binop(toks + 1, ty)));
-				return (NULL);
-			return (m);
-		}
-		else
-			toks++;
-	}
-	return (parse_binop(stoks, ty - 1));
-}
-static t_ast *parse_tokens(char **toks, int *bg)
-{
-	int tokc = 0;
-
-	while (toks[tokc])
-		tokc++;
-	if (tokc > 0 && ft_strequ("&", toks[--tokc]))
-	{
-		*bg = 1;
-		toks[tokc] = NULL;
-	}
-}
-static int is_quote(char c)
-{
-	return (c && ft_strchr("\"'`", c));
-}
-static int is_eot(char c)
-{
-	return (c && ft_strchr(" \t\n\r#", c));
-}
-char g_escs[][2] = {
-	{'\\', '\\'},
-	{'t', '\t'},
-	{'n', '\n'},
-	{'r', '\r'},
-	{'"', '"'},
-	{'\'', '\''},
-	{'`', '`'}
-};
-static int is_esc(int c)
-{
-	size_t	i;
-
-	i = 0;
-	while (i < 7)
-	{
-		if (g_escs[i][0] == c)
-			return (1);
-		i++;
-	}
-	return (0);
-}
-char *ft_strsep(char **str, const char *sep)
-{
-	char *start;
-	char *end;
-
-	start = *str;
-	if (!start)
-		return (NULL);
-	end = start + ft_strcspn(start, sep);
-	if (*end)
-		*end++ = '\0';
-	else
-		end = NULL;
-	*str = end;
-	return (start);
-}
-int tokenize(const char *token)
-{
-	size_t i;
-
-	if (!token)
-		return (-1);
-	i = 0;
-	while (i < NODE_COMMAND)
-	{
-		if (ft_strequ(g_simple[i].word, token))
-			return (g_simple[i].token);
-		i++;
-	}
-	return (NODE_COMMAND);
-}
-void insert_node(char *word, int tok)
-{
-}
-char **read_tokens(char *line)
-{
-	char	*s;
-	char	*tok;
-	char	*tofree;
-	int		tk;
-
-	s = strdup(line);
-	tofree = s;
-	while ((tok = strsep(&s, " \n\t")) != NULL)
-	{
-		tk = tokenize(tok);
-		push_token(tk);
-	}
-	return (&line);
-}
-t_ast *parse(char *line, int *bg)
-{
-	char **toks = read_tokens(line);
-
-	if (!toks || !*toks)
-		return (NULL);
-	return (parse_tokens(toks, bg));
-}
-typedef enum e_toktype {
-	IF = 258,
-	THEN = 259,
-	ELSE = 260,
-	ELIF = 261,
-	FI = 262,
-	CASE = 263,
-	ESAC = 264,
-	FOR = 265,
-	SELECT = 266,
-	WHILE = 267,
-	UNTIL = 268,
-	DO = 269,
-	DONE = 270,
-	FUNCTION = 271,
-	COPROC = 272,
-	COND_START = 273,
-	COND_END = 274,
-	COND_ERROR = 275,
-	IN = 276,
-	BANG = 277,
-	TIME = 278,
-	TIMEOPT = 279,
-	TIMEIGN = 280,
-	WORD = 281,
-	ASSIGNMENT_WORD = 282,
-	REDIR_WORD = 283,
-	NUMBER = 284,
-	ARITH_CMD = 285,
-	ARITH_FOR_EXPRS = 286,
-	COND_CMD = 287,
-	AND_AND = 288,
-	OR_OR = 289,
-	GREATER_GREATER = 290,
-	LESS_LESS = 291,
-	LESS_AND = 292,
-	LESS_LESS_LESS = 293,
-	GREATER_AND = 294,
-	SEMI_SEMI = 295,
-	SEMI_AND = 296,
-	SEMI_SEMI_AND = 297,
-	LESS_LESS_MINUS = 298,
-	AND_GREATER = 299,
-	AND_GREATER_GREATER = 300,
-	LESS_GREATER = 301,
-	GREATER_BAR = 302,
-	BAR_AND = 303,
-	PARSE_EOF = 304
-} t_symbol;
-
-extern char	*g_operator_for[];
-char *end_of_token = "&;\n\x04";
-
-/*
-** Reserved words. These are only recognized as the first word of a command.
-*/
-t_wdtk	g_word_token_alist[] = {
-	{"if", IF},
-	{"then", THEN},
-	{"else", ELSE},
-	{"elif", ELIF},
-	{"fi", FI},
-	{"case", CASE},
-	{"esac", ESAC},
-	{"for", FOR},
-	{"select", SELECT},
-	{"while", WHILE},
-	{"until", UNTIL},
-	{"do", DO},
-	{"done", DONE},
-	{"in", IN},
-	{"function", FUNCTION},
-	{"time", TIME},
-	{"{", '{'},
-	{"}", '}'},
-	{"!", BANG},
-	{"[[", COND_START},
-	{"]]", COND_END},
-	{"coproc", COPROC},
-	{(char*)NULL, 0}
-};
-
-/* other tokens that can be returned by read_token() */
-t_wdtk	g_other_token_alist[] = {
-	/* Multiple-character tokens with special values */
-	{"--", TIMEIGN},
-	{"-p", TIMEOPT},
-	{"&&", AND_AND},
-	{"||", OR_OR},
-	{">>", GREATER_GREATER},
-	{"<<", LESS_LESS},
-	{"<&", LESS_AND},
-	{">&", GREATER_AND},
-	{";;", SEMI_SEMI},
-	{";&", SEMI_AND},
-	{";;&", SEMI_SEMI_AND},
-	{"<<-", LESS_LESS_MINUS},
-	{"<<<", LESS_LESS_LESS},
-	{"&>", AND_GREATER},
-	{"&>>", AND_GREATER_GREATER},
-	{"<>", LESS_GREATER},
-	{">|", GREATER_BAR},
-	{"|&", BAR_AND},
-	{"EOF", PARSE_EOF},
-	/* Tokens whose value is the character itself */
-	{">", '>'},
-	{"<", '<'},
-	{"-", '-'},
-	{"{", '{'},
-	{"}", '}'},
-	{";", ';'},
-	{"(", '('},
-	{")", ')'},
-	{"|", '|'},
-	{"&", '&'},
-	{"newline", '\n'},
-	{(char*)NULL, 0}
-};
-
-extern char tokens[] = "#$^*(())$=|{}[]`<>>?~`,-!\"\\\\";
-typedef enum e_node_type	t_ast_ntype;
-
-t_symbol g_sym;
-t_symbol g_prev_sym;
-t_symbol g_before_prev_sym;
-
-t_symbol g_current_token;
-t_symbol g_last_read_token;
-t_symbol g_token_before_that;
-t_symbol g_two_tokens_ago;
-char **g_tokens;
-
-void expression(void);
-
-void push_token(int x)
-{
-	g_two_tokens_ago = g_token_before_that;
-	g_token_before_that = g_last_read_token;
-	g_last_read_token = g_current_token;
-	g_current_token = x;
-}
-void	nextsym(void)
-{
-	int		i;
-
-	if (!g_tokens || !*g_tokens)
-		push_token(PARSE_EOF);
-	i = -1;
-	while (g_other_token_alist[++i].word != NULL)
-	{
-		if (ft_strequ(g_other_token_alist[i].word, *g_tokens)) {
-			push_token(g_other_token_alist[i].flags);
-			break;
-		}
-	}
-	g_tokens++;
-	if (g_other_token_alist[i].word == NULL)
-		push_token(WORD);
-}
-
-void	parse_error(const char msg[])
-{
-	ft_dprintf("%s\n", msg);
-}
-
-int		accept(t_symbol s)
-{
-	if (g_sym == s)
-	{
-		nextsym();
-		return (1);
-	}
-	return (0);
-}
-
-void expect(t_symbol s)
-{
-	if (accept(s))
-		return (1);
-	error("expect: unexpected symbol");
-	return (0);
-}
-
-void factor(void)
-{
-	if (accept(WORD))
-		;
-	else if (accept(NUMBER));
-	else if (accept('('))
-	{
-		expression();
-		expect(')');
+		parse_input(argv[1]);
 	}
 	else
 	{
-		error("factor: syntax error");
-		nextsym();
+		fprintf(stderr, "%s: not enough arguments\n", *argv);
 	}
-}
-
-void term(void)
-{
-	factor();
-	while (g_sym == AND_AND || g_sym == OR_OR)
-	{
-		nextsym();
-		factor();
-	}
-}
-
-void expression(void)
-{
-	if (g_sym == '&' || g_sym == ';')
-		nextsym();
-	term();
-	while (g_sym == '&' || g_sym == ';')
-	{
-		nextsym();
-		term();
-	}
-}
-
-void condition(void)
-{
-	if (accept(WORD))
-		expression();
-	else
-	{
-		expression();
-		if (g_sym == '=' || g_sym == '<' || g_sym == '>')
-		{
-			nextsym();
-			expression();
-		}
-		else
-		{
-			error("condition: invalid operator");
-			nextsym();
-		}
-	}
-}
-/*
-command
-
-VAR=VAL
-CMD CMDOPT CMDARG [;&|>]
-*/
-void statement(void)
-{
-	if (accept(ASSIGNMENT_WORD))
-	{
-		expect('=');
-		expression();
-	}
-	else if (accept('|'))
-	{
-		expect(WORD);
-	}
-	else if (accept(WORD))
-	{
-		do {
-			statement();
-		} while (accept(';'));
-		expect('\n');
-	}
-	else if (accept(IF))
-	{
-		condition();
-		expect(THEN);
-		statement();
-	}
-	else if (accept(WHILE))
-	{
-		condition();
-		expect(DO);
-		statement();
-	}
-	else
-	{
-		error("statement: syntax error");
-		nextsym();
-	}
-}
-
-void block(void)
-{
-	if (accept(1))
-		return ;
 }
