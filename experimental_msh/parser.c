@@ -17,7 +17,7 @@
 ** .	..
 **        5
 ** $
-** parse into `struct s_element'
+** parse into `struct s_element' or other useful parsing struct
 struct	s_element {
 	t_wdtk	*word;
 	t_redir	*redirect;
@@ -45,6 +45,41 @@ typedef struct s_cmd {
 	redirections?
 }
 */
+
+/*
+**
+** CWORD		- nothing special; an ordinary character
+** CSHMETA		- shell meta character
+** CSHBRK		- shell break character
+** CBACKQ		- back quote
+** CQUOTE		- shell quote character
+** CSPECL		- special character that needs quoting
+** CEXP			- shell expansion character
+** CBSDQUOTE	- characters escaped by backslash in double quotes
+** CBSHDOC		- characters escaped by backslash in here doc
+** CGLOB		- globbing characters
+** CXGLOB		- extended globbing characters
+** CXQUOTE		- cquote + backslash
+** CSPECVAR		- single-character shell variable name
+** CSUBSTOP		- values of OP for ${word[:]OPstuff}
+** CBLANK		- whitespace (blank) character
+*/
+
+# define CWORD		0x0000
+# define CSHMETA	0x0001
+# define CSHBRK		0x0002
+# define CBACKQ		0x0004
+# define CQUOTE		0x0008
+# define CSPECL		0x0010
+# define CEXP		0x0020
+# define CBSDQUOTE	0x0040
+# define CBSHDOC	0x0080
+# define CGLOB		0x0100
+# define CXGLOB		0x0200
+# define CXQUOTE	0x0400
+# define CSPECVAR	0x0800
+# define CSUBSTOP	0x1000
+# define CBLANK		0x2000
 
 # define REVLIST(l,t) ((l && l->next) ? (t)list_reverse((t_glist*)l) : (t)(l))
 # define STRSAV(x) strcpy(malloc(1 + strlen(x)), (x))
@@ -313,6 +348,9 @@ void		map_word_list(t_wlst *list, void (*func)(t_wdtk *))
 	}
 }
 
+int tok_word_len(const char *str);
+
+#define TOKEN_SEP " \t\n\r#"
 /* Parse input into a WORD_LIST */
 void parse_input(char *argv)
 {
@@ -328,7 +366,7 @@ void parse_input(char *argv)
 	while (idx+token_length < total)
 	{
 		/* is it an invalid starting word */
-		token_length = strcspn(str+idx, " \t\n");
+		token_length = strcspn(str+idx, TOKEN_SEP);
 		fprintf(stderr, "DEBUG: token_length(%zd) idx(%zd)\n", token_length, idx);
 		if (token_length == 0)
 			break;
