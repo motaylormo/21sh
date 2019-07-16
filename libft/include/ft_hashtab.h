@@ -34,11 +34,11 @@ typedef char	*t_shstrf(char *s);
 typedef void	t_shfree(void *p);
 
 /*
-** next - Link to next hashed key in this bucket.
-** key - What we look up.
-** data - What we really want.
-** khash - What key hashes to
-** tfnd - Number of times this item has been found.
+** next		- Link to next hashed key in this bucket.
+** key		- What we look up.
+** data		- What we really want.
+** khash	- What key hashes to
+** tfnd		- Number of times this item has been found.
 */
 
 struct			s_bucket
@@ -51,9 +51,9 @@ struct			s_bucket
 };
 
 /*
-** bucket_array - Where the data is kept.
-** nbkts - How many buckets does this table have.
-** nents - How many entries does this table have.
+** bucket_array		- Where the data is kept.
+** nbkts			- How many buckets does this table have.
+** nents			- How many entries does this table have.
 */
 
 struct			s_htab
@@ -115,7 +115,7 @@ void			hash_pstats(t_htab *table, char *name);
 
 # define DEFAULT_HASH_BUCKETS 128
 
-# define HASH_ENTRIES(ht)	((ht) ? (ht)->nents : 0)
+# define HASH_ENTRIES(ht) ((ht) ? (ht)->nents : 0)
 # ifdef SAVESTR
 #  undef SAVESTR
 # endif

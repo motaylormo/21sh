@@ -1,4 +1,5 @@
 #include "command.h"
+#include "syntax.h"
 
 #include <inttypes.h>
 #include <stdlib.h>
@@ -45,81 +46,6 @@ typedef struct s_cmd {
 	redirections?
 }
 */
-
-/*
-** Values for character flags in syntax tables - syntax.h
-**
-** CWORD		- nothing special; an ordinary character
-** CSHMETA		- shell meta character
-** CSHBRK		- shell break character
-** CBACKQ		- back quote
-** CQUOTE		- shell quote character
-** CSPECL		- special character that needs quoting
-** CEXP			- shell expansion character
-** CBSDQUOTE	- characters escaped by backslash in double quotes
-** CBSHDOC		- characters escaped by backslash in here doc
-** CGLOB		- globbing characters
-** CXGLOB		- extended globbing characters
-** CXQUOTE		- cquote + backslash
-** CSPECVAR		- single-character shell variable name
-** CSUBSTOP		- values of OP for ${word[:]OPstuff}
-** CBLANK		- whitespace (blank) character
-*/
-
-# define CWORD		0x0000
-# define CSHMETA	0x0001
-# define CSHBRK		0x0002
-# define CBACKQ		0x0004
-# define CQUOTE		0x0008
-# define CSPECL		0x0010
-# define CEXP		0x0020
-# define CBSDQUOTE	0x0040
-# define CBSHDOC	0x0080
-# define CGLOB		0x0100
-# define CXGLOB		0x0200
-# define CXQUOTE	0x0400
-# define CSPECVAR	0x0800
-# define CSUBSTOP	0x1000
-# define CBLANK		0x2000
-
-/* Defines for use by the rest of the shell. */
-extern int sh_syntaxtab[];
-extern int sh_syntabsiz;
-
-# define shellmeta(c)	(sh_syntaxtab[(unsigned char)(c)] & CSHMETA)
-# define shellbreak(c)	(sh_syntaxtab[(unsigned char)(c)] & CSHBRK)
-# define shellquote(c)	(sh_syntaxtab[(unsigned char)(c)] & CQUOTE)
-# define shellxquote(c)	(sh_syntaxtab[(unsigned char)(c)] & CXQUOTE)
-
-# define shellblank(c)	(sh_syntaxtab[(unsigned char)(c)] & CBLANK)
-
-# define parserblank(c)	((c) == ' ' || (c) == '\t')
-
-# define issyntype(c, t)	((sh_syntaxtab[(unsigned char)(c)] & (t)) != 0)
-# define notsyntype(c,t) ((sh_syntaxtab[(unsigned char)(c)] & (t)) == 0)
-
-# if defined (PROCESS_SUBSTITUTION)
-#  define shellexp(c)	((c) == '$' || (c) == '<' || (c) == '>')
-# else
-#  define shellexp(c)	((c) == '$')
-# endif
-
-# if defined (EXTENDED_GLOB)
-#  define PATTERN_CHAR(c) \
-	((c) == '@' || (c) == '*' || (c) == '+' || (c) == '?' || (c) == '!')
-# else
-#  define PATTERN_CHAR(c) 0
-# endif
-
-# define GLOB_CHAR(c) \
-	((c) == '*' || (c) == '?' || (c) == '[' || (c) == ']' || (c) == '^')
-
-# define CTLESC '\001'
-# define CTLNUL '\177'
-
-# if !defined (HAVE_ISBLANK) && !defined (isblank)
-#  define isblank(x)	((x) == ' ' || (x) == '\t')
-# endif
 
 int sh_syntabsiz = 256;
 int sh_syntaxtab[256] = {
@@ -648,7 +574,33 @@ void		map_word_list(t_wlst *list, void (*func)(t_wdtk *))
 	}
 }
 
-int tok_word_len(const char *str);
+// #define WORDDELIM(c) (shellmeta(c) || shellblank(c))
+
+int tok_word_len(const char *str)
+{
+	const char	*ptr = str;
+	char		*tmp;
+
+	if (!str || *str == '\0')
+		return (0);
+	while (shellblank(*ptr))
+		ptr++;
+	if (*ptr == '\0')
+		return (0);
+	while (shellbreak(*ptr) == 0)
+	{
+		if (shellquote(*ptr))
+		{
+			tmp = strchr(ptr + 1, *ptr);
+			if (tmp == NULL)
+				return (0);
+			else
+				return (1 + tmp - ptr);
+		}
+		ptr++;
+	}
+	return (ptr - str);
+}
 
 #define TOKEN_SEP " \t\n\r#"
 /* Parse input into a WORD_LIST */
@@ -657,7 +609,7 @@ void parse_input(char *argv)
 	char *tofree=0, *tmp=0, *str=0;
 	t_wlst *inpt=0;
 	size_t token_length=0, idx=0, total=0;
-	int inpt_length=0;
+	int inpt_length=0, exp_length=0;
 
 	tofree = str = strdup(argv);
 	if (str == NULL)
@@ -666,8 +618,9 @@ void parse_input(char *argv)
 	while (idx+token_length < total)
 	{
 		/* is it an invalid starting word */
-		token_length = strcspn(str+idx, TOKEN_SEP);
-		fprintf(stderr, "DEBUG: token_length(%zd) idx(%zd)\n", token_length, idx);
+		token_length = tok_word_len(str+idx);
+		exp_length = strcspn(str+idx, TOKEN_SEP);
+		fprintf(stderr, "DEBUG: token_length(%zd) idx(%zd) exp_length(%d)\n", token_length, idx, exp_length);
 		if (token_length == 0)
 			break;
 
@@ -682,7 +635,7 @@ void parse_input(char *argv)
 		/* if redirection, ensure it is valid: [n] */
 		inpt = make_word_list(make_word(tmp), inpt);
 		/* inpt = make_word_list(make_bare_word(tmp), inpt); */
-		idx += token_length + 1;
+		idx += token_length + (inpt->word->flags & W_QUOTED);
 		token_length = 0;
 	}
 	free(tofree);

@@ -327,6 +327,43 @@ t_symbol g_last_read_token;
 t_symbol g_token_before_that;
 t_symbol g_two_tokens_ago;
 char **g_tokens;
+int shell_eof_token;
+int current_token;
+int parser_state;
+static int last_read_token;
+static int token_before_that;
+static int two_tokens_ago;
+
+/* Use a stack or keeping track of delimiters */
+/* Definition of the delimiter stack. */
+struct dstack {
+/* DELIMITERS is a stack of the nested delimiters that we have
+encountered so far */
+	char	*delimiters;
+/* Offset into the stack of delimiters. */
+	int		depth;
+/* How many slots are allocated to DELIMITERS. */
+	int		space;
+};
+static int token_to_read;
+static t_wdtk *word_desc_to_read;
+
+static t_rdtgt source;
+static t_rdtgt redir;
+struct dstack dstack = {NULL, 0, 0};
+
+#define current_delimiter(ds) (ds.depth ? ds.delimiters[ds.depth - 1] : 0)
+
+#define push_delimiter(ds, character) \
+	do { \
+		if (ds.depth + 2 > ds.space) \
+			ds.delimiters = (char*)realloc \
+			(ds.delimiters, (ds.space += 10) * sizeof(char)); \
+			ds.delimiters[ds.depth] = character; \
+			ds.depth++; \
+	} while (0)
+
+#define pop_delimiter(ds) ds.depth--
 
 void expression(void);
 
