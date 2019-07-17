@@ -395,6 +395,8 @@ t_wdtk		*make_word_flags(t_wdtk *w, const char *string)
 			w->flags |= W_HASDOLLAR;
 		if (string[i] == '\\' && i++)
 			continue;
+		/* if (string[i] == '\'' && !(w->flags & W_QUOTED)) */
+		/* 	w->flags |= W_NOEXPAND; */
 		if (string[i] == '\'' || string[i] == '`' || string[i] == '"')
 			w->flags |= W_QUOTED;
 		i++;
@@ -557,7 +559,7 @@ void		print_word_token(t_wdtk *word)
 {
 	if (word == NULL)
 		return ;
-	printf("{word(%s) flags(%d)}\n", word->word, word->flags);
+	printf("{flags(%d) word(%s)}\n", word->flags, word->word);
 }
 
 void		map_word_list(t_wlst *list, void (*func)(t_wdtk *))
@@ -579,7 +581,7 @@ void		map_word_list(t_wlst *list, void (*func)(t_wdtk *))
 int tok_word_len(const char *str)
 {
 	const char	*ptr = str;
-	char		*tmp;
+	const char	*tmp;
 
 	if (!str || *str == '\0')
 		return (0);
@@ -587,29 +589,37 @@ int tok_word_len(const char *str)
 		ptr++;
 	if (*ptr == '\0')
 		return (0);
-	while (shellbreak(*ptr) == 0)
-	{
-		if (shellquote(*ptr))
-		{
-			tmp = strchr(ptr + 1, *ptr);
-			if (tmp == NULL)
-				return (0);
-			else
-				return (1 + tmp - ptr);
+	tmp = ptr;
+	if (shellmeta(*ptr)) {
+		while (*ptr && shellmeta(*ptr)) {
+			/* if (shellquote(*ptr)) */
+			/* 	goto quotedtok; */
+			ptr++;
 		}
-		ptr++;
+	} else {
+		while (*ptr && shellbreak(*ptr) == 0)
+		{
+			if (shellquote(*ptr))
+				goto quotedtok;
+			ptr++;
+		}
 	}
-	return (ptr - str);
+	return (ptr - tmp);
+quotedtok:
+	tmp = strchr(ptr + 1, *ptr);
+	if (tmp == NULL)
+		return (0);
+	else
+		return (1 + tmp - ptr);
 }
 
-#define TOKEN_SEP " \t\n\r#"
 /* Parse input into a WORD_LIST */
 void parse_input(char *argv)
 {
 	char *tofree=0, *tmp=0, *str=0;
 	t_wlst *inpt=0;
 	size_t token_length=0, idx=0, total=0;
-	int inpt_length=0, exp_length=0;
+	int inpt_length=0;
 
 	tofree = str = strdup(argv);
 	if (str == NULL)
@@ -617,10 +627,11 @@ void parse_input(char *argv)
 	total = strlen(str);
 	while (idx+token_length < total)
 	{
+		while (shellblank(str[idx]))
+			idx++;
 		/* is it an invalid starting word */
 		token_length = tok_word_len(str+idx);
-		exp_length = strcspn(str+idx, TOKEN_SEP);
-		fprintf(stderr, "DEBUG: token_length(%zd) idx(%zd) exp_length(%d)\n", token_length, idx, exp_length);
+		fprintf(stderr, "DEBUG: token_length(%zd) idx(%zd)\n", token_length, idx);
 		if (token_length == 0)
 			break;
 
@@ -635,8 +646,11 @@ void parse_input(char *argv)
 		/* if redirection, ensure it is valid: [n] */
 		inpt = make_word_list(make_word(tmp), inpt);
 		/* inpt = make_word_list(make_bare_word(tmp), inpt); */
-		idx += token_length + (inpt->word->flags & W_QUOTED);
+		/* idx += token_length + ((inpt->word->flags & W_QUOTED) || (shellblank(str[idx+token_length]))); */
+		idx += token_length;// + (shellquote(str[idx+token_length-1]) || shellblank(str[idx+token_length-1]));
 		token_length = 0;
+		while (shellblank(str[idx]))
+			idx++;
 	}
 	free(tofree);
 	inpt = REVLIST(inpt, t_wlst*);
@@ -653,6 +667,7 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		fprintf(stderr, "%s: not enough arguments\n", *argv);
+		parse_input("\'h \';\' h\'");
+		/* fprintf(stderr, "%s: not enough arguments\n", *argv); */
 	}
 }
