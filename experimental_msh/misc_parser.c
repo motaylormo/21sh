@@ -315,6 +315,76 @@ t_wdtk	g_other_token_alist[] = {
 	{(char*)NULL, 0}
 };
 
+enum nottoktype {
+	NULLTOK,
+	SEPER,
+	NEWLIN,
+	SEMI,
+	DSEMI,
+	AMPER,
+	INPAR,
+	OUTPAR,
+	DBAR,
+	DAMPER,
+	OUTANG,
+	OUTANGBANG,
+	DOUTANG,
+	DOUTANGBANG,
+	INANG,
+	INOUTANG,
+	DINANG,
+	DINANGDASH,
+	INANGAMP,
+	OUTANGAMP,
+	AMPOUTANG,
+	OUTANGAMPBANG,
+	DOUTANGAMP,
+	DOUTANGAMPBANG,
+	TRINANG,
+	BAR,
+	BARAMP,
+	INOUTPAR,
+	DINPAR,
+	DOUTPAR,
+	AMPERBANG,
+	SEMIAMP,
+	SEMIBAR,
+};
+char *nottokstrings[WHILE + 1] = {
+	NULL,	/* NULLTOK		  0  */
+	";",	/* SEPER		     */
+	"\\n",	/* NEWLIN		     */
+	";",	/* SEMI			     */
+	";;",	/* DSEMI		     */
+	"&",	/* AMPER		  5  */
+	"(",	/* INPAR		     */
+	")",	/* OUTPAR		     */
+	"||",	/* DBAR			     */
+	"&&",	/* DAMPER		     */
+	">",	/* OUTANG		  10 */
+	">|",	/* OUTANGBANG	     */
+	">>",	/* DOUTANG		     */
+	">>|",	/* DOUTANGBANG	     */
+	"<",	/* INANG		     */
+	"<>",	/* INOUTANG		  15 */
+	"<<",	/* DINANG		     */
+	"<<-",	/* DINANGDASH	     */
+	"<&",	/* INANGAMP		     */
+	">&",	/* OUTANGAMP	     */
+	"&>",	/* AMPOUTANG	  20 */
+	"&>|",	/* OUTANGAMPBANG     */
+	">>&",	/* DOUTANGAMP	     */
+	">>&|",	/* DOUTANGAMPBANG    */
+	"<<<",	/* TRINANG		     */
+	"|",	/* BAR			  25 */
+	"|&",	/* BARAMP		     */
+	"()",	/* INOUTPAR		     */
+	"((",	/* DINPAR		     */
+	"))",	/* DOUTPAR		     */
+	"&|",	/* AMPERBANG	  30 */
+	";&",	/* SEMIAMP		     */
+	";|",	/* SEMIBAR		     */
+};
 extern char tokens[] = "#$^*(())$=|{}[]`<>>?~`,-!\"\\\\";
 typedef enum e_node_type	t_ast_ntype;
 

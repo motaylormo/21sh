@@ -45,6 +45,10 @@ typedef struct s_cmd {
 	WORD_TOKEN **arguments;
 	redirections?
 }
+NOTES--
+read in a token and categorize it, returning the token and the type of token
+as a string and integer
+{">>", DOUTANG}
 */
 
 int sh_syntabsiz = 256;
@@ -555,11 +559,42 @@ t_redir		*make_redirection(t_rdtgt source, enum r_instruction instruction,
 	return (temp);
 }
 
+struct dbg_toktype {
+	char *tokstr;
+	char *name;
+	int type;
+};
+enum toktype {
+	SEMI,
+	NEWLIN,
+	OUTANG,
+	INANG,
+	DOUTANG,
+	DINANG,
+	OUTANGAMP,
+	INANGAMP,
+	BAR,
+	MAXTOKTYPE,
+	CMD
+};
+struct dbg_toktype dbgtok[] = {
+	{";", "SEMI", SEMI},
+	{"\\n", "NEWLIN", NEWLIN},
+	{">", "OUTANG", OUTANG},
+	{"<", "INANG", INANG},
+	{">>", "DOUTANG", DOUTANG},
+	{"<<", "DINANG", DINANG},
+	{">&", "OUTANGAMP", OUTANGAMP},
+	{"<&", "INANGAMP", INANGAMP},
+	{"|", "BAR", BAR},
+};
 void		print_word_token(t_wdtk *word)
 {
 	if (word == NULL)
 		return ;
-	printf("{flags(%d) word(%s)}\n", word->flags, word->word);
+	printf("{flags(%s) word(%s)}\n",
+			word->flags < MAXTOKTYPE ? dbgtok[word->flags].name : "CMD",
+			word->word);
 }
 
 void		map_word_list(t_wlst *list, void (*func)(t_wdtk *))
@@ -612,6 +647,36 @@ quotedtok:
 	else
 		return (1 + tmp - ptr);
 }
+char *tokstrings[] = {
+	";",
+	"\\n",
+	">",
+	"<",
+	">>",
+	"<<",
+	">&",
+	"<&",
+	"|",
+};
+typedef struct word_token {
+	struct word_token *next;
+	char *word;
+	int flags;
+	int type;
+} word_token;
+int tokenize_word(const char *s)
+{
+	int i;
+
+	for (i = 0; i != MAXTOKTYPE; i++)
+	{
+		if (strcmp(s, tokstrings[i]) == 0)
+			return (i);
+	}
+	return (CMD);
+}
+
+char tok_buf[4096];
 
 /* Parse input into a WORD_LIST */
 void parse_input(char *argv)
@@ -619,7 +684,7 @@ void parse_input(char *argv)
 	char *tofree=0, *tmp=0, *str=0;
 	t_wlst *inpt=0;
 	size_t token_length=0, idx=0, total=0;
-	int inpt_length=0;
+	int inpt_length=0, tok_type=0;
 
 	tofree = str = strdup(argv);
 	if (str == NULL)
@@ -639,12 +704,14 @@ void parse_input(char *argv)
 		tmp = strndup(str+idx, token_length);
 
 		/* TODO classify word */
-		fprintf(stderr, "DEBUG: tmp(%s)\n", tmp);
+		tok_type = tokenize_word(tmp);
+		fprintf(stderr, "DEBUG: tmp(%s) tok_type(%d)\n", tmp, tok_type);
 
 		/* if command, check for arguments and */
 
 		/* if redirection, ensure it is valid: [n] */
 		inpt = make_word_list(make_word(tmp), inpt);
+		inpt->word->flags = tok_type;
 		/* inpt = make_word_list(make_bare_word(tmp), inpt); */
 		/* idx += token_length + ((inpt->word->flags & W_QUOTED) || (shellblank(str[idx+token_length]))); */
 		idx += token_length;// + (shellquote(str[idx+token_length-1]) || shellblank(str[idx+token_length-1]));

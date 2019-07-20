@@ -6,7 +6,7 @@
 #    By: callen <callen@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/09/16 21:01:37 by callen            #+#    #+#              #
-#    Updated: 2019/06/27 21:40:32 by callen           ###   ########.fr        #
+#    Updated: 2019/07/19 20:51:56 by callen           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,7 +38,7 @@ $(NAME): libobj
 
 .PHONY: libobj
 libobj:
-	@make -C $(SRCDIR) -sj4 -f Src.mk all
+	@make -s -C $(SRCDIR) -f Src.mk all
 
 .PHONY: debug
 debug: $(DNAME)
@@ -49,7 +49,7 @@ $(DNAME): dlibobj
 
 .PHONY: dlibobj
 dlibobj:
-	@make -C $(SRCDIR) -sj4 -f Src.mk debug
+	@make -s -C $(SRCDIR) -f Src.mk debug
 
 .PHONY: asan
 asan: $(ANAME)
@@ -60,7 +60,7 @@ $(ANAME): alibobj
 
 .PHONY: alibobj
 alibobj:
-	@make -C $(SRCDIR) -sj4 -f Src.mk asan
+	@make -s -C $(SRCDIR) -f Src.mk asan
 
 .PHONY: clean
 clean:
@@ -87,7 +87,7 @@ fclean: clean
 re: fclean all
 
 tags:
-	ctags -f $@ -e -R .
+	ctags -f $@ -R .
 
 TAGS:
 	ctags -f $@ -e -R .
