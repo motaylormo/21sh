@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "sh21.h"
-#include "ft_stdio.h"
 #include <pwd.h>
 #include <sys/types.h>
 
@@ -27,6 +26,7 @@ char		*g_home = 0;
 #define EL (ln[5])
 
 /*
+** FIXME: macros trip norminette for `CheckDefine'
 ** PL = pattern string length
 ** RL = replacement string length
 ** NL = new string length
@@ -55,13 +55,6 @@ char		*strsub_rep(char *str, char *pat, char *rep)
 	}
 	return (r);
 }
-
-#undef PL
-#undef RL
-#undef NL
-#undef TL
-#undef SL
-#undef EL
 
 /*
 ** Variable Dereference Substitution
@@ -122,7 +115,7 @@ char		*sh_dollar(char *ret, char *tmp)
 	if (!tmp || !*tmp || (r = NULL))
 		return (ret);
 	varlen = sh_varlen(tmp);
-	var = ft_strndup(tmp, varlen + (!varlen ? 2 : 1));
+	var = strndup(tmp, varlen + (!varlen ? 2 : 1)); //FIXME: missing ft_strndup
 	val = find_env(var + (!varlen ? 0 : 1));
 	if (val)
 	{

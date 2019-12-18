@@ -99,7 +99,7 @@ void	ft_cpycat_path(char *dst, const char *old, const char *new);
 ** get_next_line
 */
 int		get_next_line(const int fd, char **line);
-char	**str_to_argv(char *str);
+char	**ft_str_to_argv(char *str);
 
 /*
 ** ft_printf

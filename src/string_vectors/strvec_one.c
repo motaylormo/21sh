@@ -104,5 +104,3 @@ void		strvec_flush(char **array)
 		i++;
 	}
 }
-
-#undef ABSUB

@@ -43,6 +43,17 @@ static int	count_args(char *str, int (*f)(int))
 	return (count);
 }
 
+int			ft_strchri(const char *str, int ch)
+{
+	int		ii;
+
+	ii = -1;
+	while (str[++ii])
+		if (str[ii] == ch)
+			return (ii);
+	return (-1);
+}
+
 static char	**get_args(char *str, char **argv, int argc, int (*f)(int))
 {
 	int	len;

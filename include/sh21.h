@@ -138,4 +138,10 @@ void			builtin_exit(char **argv);
 void			builtin_setenv(char **argv);
 void			builtin_unsetenv(char **argv);
 
+/*
+**	Misc
+*/
+int				ft_isspace(int ch);
+int				ft_strchri(const char *str, int ch);
+
 #endif

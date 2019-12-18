@@ -15,8 +15,7 @@
 
 # include "command.h"
 
-# include "ft_string.h"
-# include "ft_stdlib.h"
+# include "libft.h"
 
 # define REVLIST(l,t) ((l && l->next) ? (t)list_reverse((t_glist*)l) : (t)(l))
 # define STRSAV(x) ft_strcpy(malloc(1 + ft_strlen(x)), (x))

@@ -63,6 +63,11 @@ static void	exec_command(char **argv)
 	handle_error(error_command, argv[0]);
 }
 
+int			ft_isspace(int c)
+{
+	return (c == 32 || (c >= 9 && c <= 13));
+}
+
 static void exec_cl(char *cl)
 {
 	char	**argv;

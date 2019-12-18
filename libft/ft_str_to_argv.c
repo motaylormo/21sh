@@ -75,7 +75,7 @@ static char			**get_args(char *str, char **argv, unsigned int argc)
 	return (argv);
 }
 
-char				**str_to_argv(char *str)
+char				**ft_str_to_argv(char *str)
 {
 	unsigned int	argc;
 	char			**argv;

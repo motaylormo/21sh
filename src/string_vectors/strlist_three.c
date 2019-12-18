@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_stdio.h"
+#include "libft.h"
 #include "strvec.h"
 
 t_strlst	*strlist_append(t_strlst *m1, t_strlst *m2)
@@ -70,11 +70,6 @@ t_strlst	*strlist_prefix_suffix(t_strlst *sl, char *prefix, char *suffix)
 	}
 	return (sl);
 }
-
-#undef PLEN
-#undef SLEN
-#undef TLEN
-#undef LLEN
 
 void		strlist_print(t_strlst *sl, char *prefix)
 {
