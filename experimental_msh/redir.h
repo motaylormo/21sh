@@ -1,7 +1,7 @@
 #ifndef REDIR_H
 # define REDIR_H
 
-# include "./command.h"
+# include "command.h"
 
 /* Values for flags argument to do_redirections */
 # define RX_ACTIVE 0x01 /* do it; don't just go through the motions */

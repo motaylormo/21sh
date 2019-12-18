@@ -24,9 +24,9 @@ extern int errno;
 #endif
 
 #include "strvec.h"
-#include "./redir.h"
-#include "./command.h"
-#include "../libft/include/libft.h"
+#include "redir.h"
+#include "command.h"
+#include "libft/include/libft.h"
 #define SHELL_FD_BASE 10
 
 int g_expanding_redir;
