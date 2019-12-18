@@ -6,28 +6,21 @@
 #    By: mtaylor <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/06/10 08:42:00 by mtaylor           #+#    #+#              #
-#    Updated: 2019/06/28 00:23:55 by callen           ###   ########.fr        #
+#    Updated: 2019/12/10 13:27:06 by callen           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = 21sh
-CCFLAGS = -Wall -Wextra -Werror -g
 
-SHELL = /bin/sh
+CCFLAGS = -Wall -Wextra
 
-CC = clang
-RM = rm -f
-
-LIBPATH = libft
-LIBS = -lft -lcurses
-LDFLAGS = -L$(LIBPATH)
-
-SRCDIR = src
-
-INCDIR = include
-INCLUDES = -I$(INCDIR) -I$(LIBPATH)/$(INCDIR)
-
-CFLAGS = $(CCFLAGS) $(INCLUDES)
+LIBFT_PATH = libft
+LIBFT = $(LIBFT_PATH)/libft.a
+LIBDIRS = $(LIBFT_PATH)
+INCDIRS =	include \
+			$(LIBDIRS)
+INCLUDES = $(addprefix -I, $(INCDIRS))
+LDFLAGS = $(addprefix -L, $(LIBDIRS)) -lft -lcurses
 
 BUILTINS =	builtin_echo.c \
 			builtin_cd.c \
@@ -70,44 +63,39 @@ FILES =	$(addprefix builtins/, $(BUILTINS)) \
 		signals.c \
 		singletons.c
 
-SRC =	$(addprefix $(SRCDIR)/, $(FILES))
-OBJ = $(SRC:.c=.o)
+SRCS = $(addprefix src/, $(FILES))
+OBJS = $(SRCS:.c=.o)
+
+CFLAGS = $(CCFLAGS) -Werror $(INCLUDES)
 
 # **************************************************************************** #
 
 .PHONY: all
 all: $(NAME)
 
-$(NAME): objfiles
-	make -s -C $(LIBPATH) all
-	$(CC) $(CFLAGS) $(LDFLAGS) $(LIBS) $(OBJ) -o $(NAME)
+$(NAME): $(LIBFT) $(OBJS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $(NAME) $(OBJS)
 
-.PHONY: objfiles
-objfiles: $(SRC:.c=.o)
+$(LIBFT):
+	$(MAKE) -C $(LIBFT_PATH)
 
 .PHONY: debug
-debug: LIBS = libft/d_libft.a -lcurses
-debug: objfiles
-	make -s -C $(LIBPATH) debug
-	$(CC) $(CFLAGS) $(LDFLAGS) $(LIBS) $(OBJ) -o $(NAME)
+debug: CFLAGS = $(CCFLAGS) -g $(INCLUDES)
+debug: $(NAME)
 
 .PHONY: fsan
-fsan: LIBS = libft/a_libft.a -lcurses
-fsan: CCFLAGS = -Wall -Wextra -Werror -fsanitize=address -g
-fsan:
-	make -s -C $(LIBPATH) asan
-	$(CC) $(CFLAGS) $(LDFLAGS) $(LIBS) $(SRC) -o $(NAME)
+fsan: CFLAGS = $(CCFLAGS) -g -fsanitize=address $(INCLUDES)
+fsan: $(NAME)
 
 .PHONY: clean
 clean:
-	make -s -C $(LIBPATH) clean
-	$(RM) $(OBJ)
+	$(MAKE) -C $(LIBFT_PATH) clean
+	-$(RM) $(OBJS)
 
 .PHONY: fclean
 fclean: clean
-	make -s -C $(LIBPATH) fclean
-	$(RM) $(NAME)
-	$(RM) -R $(NAME).dSYM
+	$(MAKE) -C $(LIBFT_PATH) fclean
+	-$(RM) -r $(NAME) $(NAME).dSYM
 
 .PHONY: re
 re: fclean all
