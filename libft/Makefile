@@ -6,7 +6,7 @@
 #    By: mtaylor <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/23 19:57:40 by mtaylor           #+#    #+#              #
-#    Updated: 2019/12/17 14:38:11 by callen           ###   ########.fr        #
+#    Updated: 2019/12/20 18:09:22 by callen           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ INCDIRS = .
 host_os := $(shell uname)
 ifeq "$(host_os)" "Darwin"
 xcode_path := $(shell xcode-select -p)
-cc_mv_gt11 := $(shell expr `$(CC) --version | awk 'NR==1{print$$4}' | cut -f1 -d.` \>= 11)
+cc_mv_gt11 := $(shell expr `$(CC) --version | awk 'NR==1{printf("%.1s\n", $$4}'` \>= 11)
 ifeq "$(cc_mv_gt11)" "1"
 ifeq "$(wildcard /usr/include/.*)" ""
 INCDIRS += $(xcode_path)/SDKs/MacOSX.sdk/usr/include
