@@ -6,7 +6,7 @@
 #    By: mtaylor <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/10/23 19:57:40 by mtaylor           #+#    #+#              #
-#    Updated: 2019/12/20 18:12:06 by callen           ###   ########.fr        #
+#    Updated: 2019/12/22 23:02:32 by callen           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,17 +19,16 @@ INCDIRS = .
 host_os := $(shell uname)
 ifeq "$(host_os)" "Darwin"
 xcode_path := $(shell xcode-select -p)
-cc_mv_gt11 := $(shell expr `$(CC) --version | awk 'NR==1{printf("%.1s\n", $$4)}'` \>= 11)
+cc_mv_gt11 := $(shell expr `$(CC) --version | head -n1 | cut -d" " -f4 | cut -d"." -f1` \>= 11)
 ifeq "$(cc_mv_gt11)" "1"
 ifeq "$(wildcard /usr/include/.*)" ""
 INCDIRS += $(xcode_path)/SDKs/MacOSX.sdk/usr/include
-endif # !/usr/include
-CCFLAGS += -Wno-nullability-completeness
+endif # Don't have /usr/include
+CCFLAGS += -Wno-nullability-completeness -Wno-expansion-to-defined
 endif # Apple Clang major version < 11
-else
-# Not Apple Darwin Kernel
+else  # Not Apple Darwin Kernel
 cc_major_ver := $(shell $(CC) -dumpversion)
-#TODO: change flags for cc_major_ver on non-Darwin systems
+#TODO: change flags for cc_major_ver on non-Darwin systems as needed
 endif # !host_os
 
 INCLUDES = $(addprefix -I, $(INCDIRS))
